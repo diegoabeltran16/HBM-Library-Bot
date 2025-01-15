@@ -14,7 +14,6 @@ MS_TENANT_ID = os.getenv('MS_TENANT_ID')
 AUTH_URL = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
 
 
-
 def get_access_token():
     """
     Authenticates with Microsoft Graph using the client credentials flow

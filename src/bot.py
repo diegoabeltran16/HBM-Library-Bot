@@ -1,11 +1,10 @@
 import os
-import csv
-from datetime import datetime
 import discord
 from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
-from ms_graph import get_access_token  # Import the Microsoft Graph authentication function
+from src.ms_graph import get_access_token  # Import the Microsoft Graph authentication function
+from src.db_manager import initialize_database, insert_reference  # Import database functions
 
 # Load environment variables from the .env file
 load_dotenv('configs/.env')  # Load environment variables from the correct path
@@ -22,15 +21,17 @@ intents.message_content = True  # Enable message content intent
 # Initialize the bot with a command prefix (!) and specified intents
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# Initialize the database on bot startup
+initialize_database()
+
 @bot.event
 async def on_ready():
-    """
-    Event handler that triggers when the bot successfully connects to Discord.
-    Prints a confirmation message with the bot's name.
-    Also syncs slash commands with Discord.
-    """
-    await bot.tree.sync()  # Syncs the slash commands with Discord
-    print(f'Logged in as {bot.user.name} and slash commands are ready!')
+    print("Bot is connecting...")  # Debugging output
+    try:
+        await bot.tree.sync(force=True)  # Force sync to ensure commands are registered
+        print(f'Logged in as {bot.user.name} and slash commands are ready!')
+    except Exception as e:
+        print(f"Error during command sync: {e}")
 
     # Test Microsoft Graph authentication
     token = get_access_token()
@@ -73,7 +74,7 @@ async def add_reference(interaction: discord.Interaction, reference_type: str, i
         )
         return
 
-    # Step 4: Validate the title
+    # Step 4: Validate title
     if not title.strip():
         await interaction.response.send_message("Title cannot be empty.", ephemeral=True)
         return
@@ -84,39 +85,15 @@ async def add_reference(interaction: discord.Interaction, reference_type: str, i
         return
 
     try:
-        # Step 6: Store the reference in the CSV file
-        store_reference_in_csv(reference_type, identifier, title, authors)
+        # Step 6: Store the reference in the database
+        result = insert_reference(str(interaction.user.id), reference_type, identifier, title, authors)
 
         # Step 7: Send a success message
-        await interaction.response.send_message(
-            f"Reference '{title}' by {authors} added successfully under type '{reference_type}' with identifier '{identifier}'.",
-            ephemeral=False
-        )
+        await interaction.response.send_message(result, ephemeral=False)
+
     except Exception as e:
         await interaction.response.send_message("An error occurred while adding the reference.", ephemeral=True)
         print(f"Error: {e}")
-
-def store_reference_in_csv(reference_type, identifier, title, authors):
-    """
-    Appends a new academic reference to a CSV file.
-
-    Parameters:
-    reference_type (str): The type of the reference (e.g., B for Book, D for Dictionary).
-    identifier (str): The Dewey Decimal number or another unique identifier.
-    title (str): The title of the reference.
-    authors (str): The author(s) of the reference.
-    """
-    # Path to the CSV file in your OneDrive-synced folder
-    csv_file_path = "C:/Users/diego_dx9e5pi/OneDrive/Biblioteca - Library/academic_references.csv"
-
-    try:
-        # Open the file in append mode and write the new reference
-        with open(csv_file_path, mode='a', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerow([reference_type, identifier, title, authors, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
-    except Exception as e:
-        print(f"Error writing to CSV: {e}")
-        raise
 
 # Error handling for bot startup
 try:
