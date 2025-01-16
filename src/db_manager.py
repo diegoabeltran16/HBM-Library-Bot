@@ -86,3 +86,43 @@ def fetch_references(query_params=None):
         return []
     finally:
         conn.close()
+
+def update_reference(reference_id, update_fields):
+    """
+    Updates fields of an existing reference based on its ID.
+
+    Parameters:
+    - reference_id (int): ID of the reference to update.
+    - update_fields (dict): Dictionary containing fields to update.
+
+    Returns:
+    - str: Success message or error message.
+    """
+    if not update_fields:
+        return "No fields to update."
+
+    try:
+        conn = sqlite3.connect(database_path)
+        cursor = conn.cursor()
+
+        # Dynamically construct SET clause from update_fields
+        set_clause = ", ".join([f"{key} = ?" for key in update_fields.keys()])
+        values = list(update_fields.values()) + [reference_id]
+
+        cursor.execute(f'''
+            UPDATE "references"
+            SET {set_clause}
+            WHERE id = ?
+        ''', values)
+
+        conn.commit()
+
+        if cursor.rowcount == 0:  # No rows updated
+            return f"No reference found with ID {reference_id}."
+        
+        return f"Reference with ID {reference_id} updated successfully."
+
+    except sqlite3.Error as e:
+        return f"Database error: {e}"
+    finally:
+        conn.close()

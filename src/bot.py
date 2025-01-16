@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 from src.ms_graph import get_access_token
-from src.db_manager import initialize_database, insert_reference, fetch_references
+from src.db_manager import initialize_database, insert_reference, fetch_references, update_reference as db_update_reference
 
 # Load environment variables
 load_dotenv('configs/.env')
@@ -29,7 +29,8 @@ async def on_ready():
     """
     print("Bot is connecting...")
     try:
-        synced_commands = await bot.tree.sync()  # Sync global commands
+        # Sync global commands
+        synced_commands = await bot.tree.sync()
         print(f"Logged in as {bot.user.name}. Synced Commands: {[cmd.name for cmd in synced_commands]}")
     except Exception as e:
         print(f"Error during command sync: {e}")
@@ -101,6 +102,43 @@ async def search_reference(interaction: discord.Interaction, query: str):
             await interaction.response.send_message("No references found matching the criteria.", ephemeral=True)
     except Exception as e:
         await interaction.response.send_message("An error occurred during the search.", ephemeral=True)
+        print(f"Error: {e}")
+
+
+@bot.tree.command(name="update_reference", description="Update an academic reference by ID.")
+async def update_reference(interaction: discord.Interaction, reference_id: int, title: str = None, authors: str = None, identifier: str = None):
+    """
+    Slash command to update fields of an existing academic reference.
+
+    Parameters:
+    - reference_id (int): The ID of the reference to update.
+    - title (str, optional): New title of the reference.
+    - authors (str, optional): New authors of the reference.
+    - identifier (str, optional): New identifier for the reference.
+
+    Returns:
+    Sends a success message or an error message back to the user.
+    """
+    update_fields = {}
+    if title:
+        update_fields["title"] = title
+    if authors:
+        update_fields["authors"] = authors
+    if identifier:
+        update_fields["identifier"] = identifier
+
+    if not update_fields:
+        await interaction.response.send_message(
+            "You must provide at least one field to update (e.g., title, authors, identifier).",
+            ephemeral=True
+        )
+        return
+
+    try:
+        result = db_update_reference(reference_id, update_fields)
+        await interaction.response.send_message(result, ephemeral=False)
+    except Exception as e:
+        await interaction.response.send_message("An error occurred while updating the reference.", ephemeral=True)
         print(f"Error: {e}")
 
 
