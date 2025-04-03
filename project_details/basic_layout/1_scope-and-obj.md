@@ -1,48 +1,81 @@
-# Dewey Decimal Discord Bot Project
+# 📘 OpenPages AI – PDF Knowledge Pipeline
 
-## Objective
-This project aims to create a simple tool for logging, viewing, and managing book references in the Dewey Decimal System form. The bot will be suitable for personal use and showcasing in a software engineering portfolio.
+## 🧠 Objective
 
-## Project Scope
-The Dewey Decimal Discord Bot will provide the following key functionalities:
+This project aims to create a simple, modular tool that automates the extraction, categorization, and formatting of scientific or technical documents in PDF format. It is designed to prepare documents for downstream tasks like semantic search, fine-tuning, and knowledge indexing.
 
-1. **Adding Book References:**
-   - The bot will parse user input in the format: `B. <dewey_decimal> - <category> - <title>`.
-   - It will automatically extract and store the Dewey Decimal number, category, and title in an Azure SQL database.
+Ideal for personal knowledge organization, educational access, and showcasing full-stack skills in AI prep, NLP, and structured pipelines.
 
-2. **Searching for Books:**
-   - Users can search for books within a specified Dewey Decimal range using a command.
-   - The bot will return a list of books that match the specified range, displaying their titles, Dewey Decimal numbers, and categories.
+---
 
-3. **Listing All Books:**
-   - The bot will list all books stored in the database, ordered by Dewey Decimal numbers.
-   - This feature helps users quickly view the entire library.
+## 🔧 Project Scope
 
-4. **Database Management:**
-   - The project will use an Azure SQL database to store book references.
-   - The database schema will include fields for `id`, `title`, `dewey_decimal`, and `category`.
+The PDF Knowledge Pipeline will provide the following key functionalities:
 
-5. **Error Handling and Logging:**
-   - The bot will implement robust error handling to manage invalid inputs, database connection issues, and command errors.
-   - A logging system will be set up to track bot activities and errors for easy debugging.
+1. **Automated PDF Processing**
+    - The user places one or more PDF files in the `/input` folder.
+    - The tool automatically extracts the text, processes it, and saves `.txt`, `.md`, and `.jsonl` files to the `/output` folder.
+2. **Category and Dewey Suggestion**
+    - The tool parses text to suggest a general category and Dewey Decimal classification (e.g., AI → 006.3, Quantum Physics → 530.12).
+    - Currently based on keyword heuristics with plans for NLP-based classification.
+3. **Structured Output Generation**
+    - Full text is saved as plain `.txt`.
+    - Markdown files include titles and clean formatting.
+    - JSONL files split the content into semantic chunks, ready for use in LLM embeddings, RAG, or search systems.
+4. **Offline and Open by Design**
+    - No cloud services or API keys are required.
+    - Runs locally, ensuring user privacy and simplicity.
+5. **Optional Database Integration (Future)**
+    - Output can be indexed in a local or remote database for personal knowledge search.
+    - Metadata such as filename, Dewey code, and category can be logged.
 
-6. **Deployment and Demonstration:**
-   - The bot will be deployed on a cloud platform (e.g., Azure App Service) for continuous availability.
-   - This project will be used as part of a software engineering portfolio, showcasing skills in:
-     - Backend development (Python, SQL)
-     - Cloud integration (Azure SQL)
-     - Bot development (Discord API)
-     - Error handling and logging
-     - Database design and management
+---
 
-## Technologies Used
-- **Backend:** Python (`discord.py`)
-- **Database:** Azure SQL Database
-- **Deployment:** Azure App Service
-- **Version Control:** GitHub for project management and collaboration
+## 🛠 Technologies Used
 
-## Future Enhancements (Optional)
-- **Exporting Library Data:** Allow users to export the library data to a CSV file.
-- **Advanced Search:** Implement additional search filters (e.g., by category or title).
-- **User Authentication:** Add user-specific libraries using Discord IDs.
-- **Web Interface:** Develop a simple web interface for non-Discord users to view and manage the library.
+- **Language:** Python 3.8+
+- **PDF Processing:** `PyMuPDF` (`fitz`)
+- **Output Formats:** `.txt`, `.md`, `.jsonl`
+- **Licensing:** Apache 2.0
+- **Version Control:** GitHub
+
+---
+
+## 💡 Future Enhancements (Optional)
+
+- **AI-Powered Classification:** Use spaCy, OpenAI, or local LLMs to detect more accurate categories.
+- **PDF Metadata Parsing:** Extract DOI, author, year, and use them as context fields.
+- **Custom Chunking Logic:** Allow chunking by section headers, page breaks, or semantic blocks.
+- **Embedding Generator:** Auto-generate vector embeddings and store them using FAISS or Weaviate.
+- **Web Interface:** Add a simple drag-and-drop interface for PDF upload and output preview.
+- **Dewey Training Set:** Fine-tune a classifier model on Dewey-tagged texts for better automation.
+
+---
+
+## ✅ Getting Started
+
+1. Clone the repo and install dependencies:
+    
+    ```bash
+    bash
+    CopyEdit
+    pip install pymupdf
+    
+    ```
+    
+2. Add PDFs to the `/input` folder.
+3. Run the script:
+    
+    ```bash
+    bash
+    CopyEdit
+    python main.py
+    
+    ```
+    
+4. Check the `/output` folder for:
+    - `document.txt`
+    - `document.md`
+    - `document.jsonl`
+
+---
