@@ -1,13 +1,16 @@
-# Algorithms and Math
+# 📊 Algorithms and Math – OpenPages AI
 
-## 1. Dewey Decimal Parsing Algorithm
-**Objective:** Extract and validate Dewey Decimal numbers, categories, and book titles from user input.
+This document outlines the core algorithms and logic used in the OpenPages AI (Dewey-Pipeline) system. These are implemented to support document parsing, classification, metadata enrichment, multilingual interaction, and secure export.
+
+---
+
+## 1. 📘 Dewey Decimal Parsing Algorithm
+**Objective:** Extract and validate Dewey Decimal identifiers and metadata from user input or file metadata.
 
 **Steps:**
-1. Split the user input by the delimiter `-`.
-2. Trim whitespace from each part.
-3. Validate that the first part starts with `B.` and contains a valid Dewey Decimal number.
-4. Return the parsed Dewey Decimal number, category, and title.
+1. Parse the file or input string for potential Dewey codes.
+2. Ensure it matches valid numeric format (e.g., 510.0, 530.12).
+3. Extract related category and title fields (if from structured input).
 
 **Pseudo-code:**
 ```python
@@ -15,7 +18,7 @@ function parse_reference(input):
     parts = input.split(" - ")
     if len(parts) != 3:
         raise Error("Invalid format. Use: B. <dewey_decimal> - <category> - <title>")
-    
+
     dewey_decimal = parse_dewey(parts[0])
     category = parts[1].strip()
     title = parts[2].strip()
@@ -28,12 +31,15 @@ function parse_dewey(part):
     return decimal_number
 ```
 
-## 2. Categorization Algorithm
-**Objective:** Automatically categorize books based on predefined Dewey Decimal ranges.
+---
+
+## 2. 🧠 Categorization Algorithm
+**Objective:** Automatically assign categories based on Dewey Decimal ranges or semantic matching.
 
 **Steps:**
-1. Define ranges for common categories (e.g., Mathematics, Operating Systems).
-2. Check where the Dewey Decimal number falls and assign the appropriate category.
+1. Define ranges based on standard Dewey taxonomy.
+2. Match number against ranges.
+3. Return the category name.
 
 **Example Ranges:**
 - `000-099`: General works
@@ -51,19 +57,21 @@ function categorize_dewey(dewey_decimal):
         return "General"
 ```
 
-## 3. Summary Report Algorithm
-**Objective:** Generate a summary report of books by category.
+---
+
+## 3. 📈 Summary Report Algorithm
+**Objective:** Generate a summary of document categories.
 
 **Steps:**
-1. Query the database for all book entries.
-2. Group books by category.
-3. Count the number of books in each category.
-4. Format the report in the user's preferred language.
+1. Collect parsed metadata (from `.jsonl` or DB).
+2. Group by category.
+3. Count documents in each group.
+4. Localize the output.
 
 **Pseudo-code:**
 ```python
 function generate_summary_report(language):
-    books = query_database()
+    books = query_metadata()
     summary = group_by_category(books)
     if language == "Spanish":
         return format_summary_in_spanish(summary)
@@ -71,29 +79,33 @@ function generate_summary_report(language):
         return format_summary_in_english(summary)
 ```
 
-## 4. Export Data Algorithm
-**Objective:** Export the user’s data to a CSV file.
+---
+
+## 4. 📤 Export Data Algorithm
+**Objective:** Export processed data to a CSV.
 
 **Steps:**
-1. Query the database for all book entries.
-2. Write the data to a CSV file.
-3. Provide a download link to the user.
+1. Load all processed metadata.
+2. Write to structured CSV.
+3. Validate paths and encode output.
 
 **Pseudo-code:**
 ```python
 function export_data():
-    books = query_database()
+    books = query_metadata()
     csv_file = write_to_csv(books)
-    return generate_download_link(csv_file)
+    return generate_export_path(csv_file)
 ```
 
-## 5. Error Handling Algorithm
-**Objective:** Handle errors gracefully and provide user-friendly feedback.
+---
+
+## 5. ⚠️ Error Handling Algorithm
+**Objective:** Gracefully handle runtime errors.
 
 **Steps:**
-1. Catch errors during command execution.
-2. Log the error details.
-3. Respond with a friendly error message in the user’s preferred language.
+1. Wrap key operations in try-except blocks.
+2. Log full traceback for debugging.
+3. Return localized user-friendly message.
 
 **Pseudo-code:**
 ```python
@@ -105,12 +117,14 @@ function handle_error(error, language):
         return "An error occurred. Please try again."
 ```
 
-## 6. Language Preference Algorithm
-**Objective:** Adapt responses based on the user’s language preference.
+---
+
+## 6. 🌍 Language Preference Algorithm
+**Objective:** Respond in the user’s preferred language.
 
 **Steps:**
-1. Check the user's stored language preference.
-2. Format responses accordingly.
+1. Fetch user config or `.env` language code.
+2. Translate strings where needed.
 
 **Pseudo-code:**
 ```python
@@ -121,3 +135,13 @@ function respond(message, user_id):
     else:
         return message
 ```
+
+---
+
+## ✅ Summary
+These algorithms form the cognitive and organizational backbone of OpenPages AI:
+- Clear, maintainable logic
+- Local-first + internationalized
+- Ready for AI augmentation (embeddings, semantic matching)
+- Secure and robust across environments
+
