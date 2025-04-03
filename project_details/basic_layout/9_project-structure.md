@@ -1,67 +1,137 @@
-# Project structure
+### 📌 Plan de Desarrollo del Proyecto OpenPages AI (Dewey-Pipeline)
 
-dewey-bot/
-├── .editorconfig                    # Configuration for consistent coding styles
-├── .env                             # Environment variables
-├── .flake8                          # Linting configuration for code quality
-├── .gitignore                       # Specifies files and directories ignored by git
-├── .gitlab-ci.yml                   # CI/CD pipeline configuration for GitLab
-├── .pre-commit-config.yaml          # Configuration for pre-commit hooks
-├── environment.yml                  # Environment configuration for package dependencies
-├── LICENSE                          # Project license information
-├── README.md                        # Overview and documentation of the project
-├── requirements.txt                 # List of dependencies for the project
-├── sync_branch.sh                   # Shell script for syncing branches
-├── sync_feature.sh                  # Shell script for syncing features
-├── sync_repos.sh                    # Shell script for syncing repositories
-├── project_details/                 # Contains project-related documents and information
-├── src/                             # Main source code directory
-│   ├── __pycache__/                 # Directory for compiled Python files
-│   ├── commands/                    # Contains all bot commands
-│   │   ├── __pycache__/             # Directory for compiled Python command files
-│   │   ├── add_book.py              # Command to add a new book reference
-│   │   ├── generate_summary.py      # Command to generate a summary report
-│   │   ├── list_books.py            # Command to list all book references
-│   │   ├── set_language.py          # Command to set user language
-│   │   └── export_data.py           # Command to export book references
-│   ├── config/                      # Configuration files
-│   │   └── config.yaml              # Configuration file for bot settings
-│   ├── database/                    # Database directory
-│   │   └── library.db               # Database file for storing book references
-│   ├── migrations/                  # Database migration scripts
-│   │   └── migrate_library.py       # Script for managing database migrations
-│   ├── utils/                       # Utility files for shared functionalities
-│   │   ├── __pycache__/             # Directory for compiled Python utility files
-│   │   ├── ai.py                    # AI-related utilities
-│   │   ├── database.py              # Database connection utility
-│   │   ├── db.py                    # Database utility functions
-│   │   ├── lang.py                  # Language translations utility
-│   │   ├── logging_config.py        # Logging configuration utility
-│   │   ├── nlu.py                   # Natural Language Understanding-related utility
-│   │   ├── scheduler.py             # Scheduling utility
-│   │   ├── shared.py                # Shared variables and utilities
-│   │   ├── validation.py            # Input validation utilities
-│   │   └── __init__.py              # Initializes the utility module
-│   └── bot.py                       # Main bot logic
-├── tests/                           # Contains all test scripts for the project
-│   ├── __pycache__/                 # Directory for compiled Python test files
-│   ├── test_commands/               # Contains all tests for bot commands
-│   │   ├── __pycache__/             # Directory for compiled Python test files
-│   │   ├── test_add_book.py         # Test for adding a new book reference
-│   │   ├── test_generate_summary.py # Test for generating a summary report
-│   │   ├── test_list_books.py       # Test for listing book references
-│   │   ├── test_set_language.py     # Test for setting user language
-│   │   └── test_export_data.py      # Test for exporting book references
-│   ├── test_utils/                  # Contains all tests for utility functions
-│   │   ├── __pycache__/             # Directory for compiled Python test files
-│   │   ├── test_ai.py               # Test for AI-related utilities
-│   │   ├── test_database.py         # Test for database connection utilities
-│   │   ├── test_lang.py             # Test for language translation utilities
-│   │   ├── test_logging.py          # Test for logging configuration utilities
-│   │   ├── test_nlu.py              # Test for Natural Language Understanding utilities
-│   │   ├── test_scheduler.py        # Test for scheduling utilities
-│   │   ├── test_validation.py       # Test for input validation utilities
-│   │   └── __init__.py              # Initializes the test utility module
-│   ├── test_bot.py                  # Test for the main bot functionality
-│   ├── test_database.py             # Test for database-related functions
-│   └── test_lang.py                 # Test for language-related functions
+El proyecto OpenPages AI se desarrollará en fases modulares y progresivas para garantizar un crecimiento funcional, seguro y sostenible. Cada etapa está diseñada para ser completada, validada y documentada antes de pasar a la siguiente, alineando la evolución del sistema con buenas prácticas de software, AI y ética del conocimiento.
+
+---
+
+## 🔹 Fase 1: MVP Offline de Procesamiento de PDF
+
+📍 **Objetivo:** Procesar documentos PDF localmente y generar `.txt`, `.md`, `.jsonl` con clasificación Dewey y nombres estructurados.
+
+**Incluye:**
+- Script principal (`main.py`) con flujo modular
+- Extracción de texto usando PyMuPDF
+- Clasificador por palabras clave (categoría + Dewey)
+- Generador de archivos en `/output/`
+- Mensajes bilingües (ES/EN) en terminal
+
+**Estructura de Archivos:**
+```
+openpages-ai/
+├── input/         # PDFs a procesar
+├── output/        # Archivos procesados
+├── src/
+│   ├── parser.py
+│   ├── classifier.py
+│   ├── exporter.py
+│   ├── logger.py
+│   └── utils.py
+├── main.py
+├── requirements.txt
+├── README.md
+```
+
+---
+
+## 🔹 Fase 2: CLI Extendida con Reportes y Export
+
+📍 **Objetivo:** Permitir comandos personalizados desde terminal con flags como `--summary`, `--export`, `--language`.
+
+**Incluye:**
+- Handler CLI con `argparse`
+- Módulo de resumen por categoría
+- Exportador a CSV/JSON
+- Manejo de configuraciones con `.env`
+
+**Comandos Ejemplo:**
+```bash
+python main.py --summary
+python main.py --export --format=csv
+```
+
+---
+
+## 🔹 Fase 3: Validación, Logging y Seguridad
+
+📍 **Objetivo:** Fortalecer la calidad del sistema mediante validación de datos, logs y controles de seguridad.
+
+**Incluye:**
+- Validación de tipo de archivo (solo PDF)
+- Manejo de errores con mensajes claros
+- Logging estructurado (errores, procesados)
+- Sanitización de nombres de archivos y paths
+- `.env.example` para manejo de credenciales y configuración
+
+---
+
+## 🔹 Fase 4: Internacionalización + Preferencias de Usuario
+
+📍 **Objetivo:** Personalizar la experiencia según idioma y estilo de salida.
+
+**Incluye:**
+- Módulo de preferencias de usuario (`config/user_prefs.json`)
+- Soporte completo para ES/EN
+- Opciones de tono (formal, casual)
+- Preparación para futura interfaz (modo web/UI)
+
+---
+
+## 🔹 Fase 5: Testing Automatizado + CI/CD
+
+📍 **Objetivo:** Asegurar la calidad continua mediante pruebas y automatización.
+
+**Incluye:**
+- Suite de pruebas con `pytest`
+- Pruebas para parser, clasificador, exportador y CLI
+- Configuración de GitHub Actions para CI
+- Cobertura de pruebas y badge en el README
+
+---
+
+## 🔹 Fase 6: Embeddings y Almacenamiento Vectorial *(Opcional)*
+
+📍 **Objetivo:** Preparar los `.jsonl` para embedding y búsqueda semántica
+
+**Incluye:**
+- Módulo para generar embeddings (OpenAI/HuggingFace)
+- Almacenamiento en FAISS, Weaviate o SQLite con `pgvector`
+- Búsqueda por texto natural en CLI
+
+---
+
+## 🔹 Fase 7: Interfaz Web Minimal (FastAPI/Flask)
+
+📍 **Objetivo:** Permitir carga de archivos PDF desde interfaz básica con respuestas visibles
+
+**Incluye:**
+- Drag-and-drop en navegador
+- Mensajes de salida categorizados
+- Selector de idioma
+- Previsualización de resumen/export JSONL
+
+---
+
+## 🔹 Fase 8: Despliegue, Documentación y Dominio ENS
+
+📍 **Objetivo:** Publicar el proyecto como herramienta ética, libre y educativa
+
+**Incluye:**
+- Repositorio GitHub bien documentado
+- Licencia Apache 2.0 y Código de Conducta
+- Dominio `.eth` o `.org` apuntando a la versión estática (si aplica)
+- Blog/documentación estilo Wiki con ejemplos y capturas
+
+---
+
+## 🔹 Beneficios de este Enfoque
+
+- **Modularidad Total:** Cada componente puede ser probado, escalado o mejorado por separado.
+- **IA-Ready:** Los `.jsonl` sirven para embeddings, fine-tuning o búsquedas semánticas.
+- **Multilingüe:** Desde el inicio, se contempla la diversidad lingüística.
+- **Seguridad de Base:** Pensado como herramienta offline, ética y abierta.
+- **Escalable:** Listo para convertir en API, app web o motor de conocimiento.
+
+---
+
+✨ *Este roadmap puede escalar según necesidades, manteniendo siempre la prioridad en el acceso abierto, la transparencia y la soberanía sobre los datos procesados.*
+
