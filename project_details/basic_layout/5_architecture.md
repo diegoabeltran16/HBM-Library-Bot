@@ -1,158 +1,155 @@
-# Architecture 
-The Dewey Decimal Discord Bot is designed using a multi-layered architecture to ensure modularity, maintainability, and scalability. The architecture consists of the following layers:
+# 🏗️ Architecture – OpenPages AI (Dewey-Pipeline)
 
-1. **Client Layer**
-2. **Application Layer**
+OpenPages AI is designed with a clean, modular, and scalable architecture that ensures offline-first performance, knowledge transparency, and AI readiness. Below is a modernized, security-aware version of the architecture adapted from traditional bot systems to local and/or CLI-based document pipelines.
+
+---
+
+## 🧱 Architecture Layers
+
+1. **User Interaction Layer**
+2. **Application Logic Layer**
 3. **Data Layer**
 4. **Integration Layer**
+5. **Security Layer (Cross-Cutting)**
 
 ---
 
-## Client Layer
-**Description:** This layer represents the user interface where users interact with the bot through Discord. It handles user commands and responses.
+## 🎛️ User Interaction Layer
+
+**Description:** This layer represents how users interact with the system. In the current stage, it's CLI-based, with future support for a web interface.
 
 **Components:**
-- **Discord Client:** The interface through which users interact with the bot using Discord commands.
+
+- **CLI Commands / Scripts**
+- *(Future)* Minimal Web UI (Drag & Drop)
 
 **Responsibilities:**
-- Receive and interpret user commands.
-- Display responses and information to users.
-- Provide user feedback and error messages.
 
-**Breakdown:**
-- **Discord Client:**
-  - Utilizes `discord.py` to connect to Discord.
-  - Handles events such as receiving messages and commands.
-  - Sends responses back to the Discord server.
+- Receive and parse user input (e.g., run commands, pass flags like `-summary`, `-export`)
+- Display multilingual output (EN/ES)
+- Guide new users via onboarding messages
 
 ---
 
-## Application Layer
-**Description:** This layer contains the core logic and functionality of the bot, including command handling, business logic, and interactions with other layers.
+## 🧠 Application Logic Layer
+
+**Description:** Core of the pipeline. Orchestrates parsing, classification, export, and feedback.
 
 **Components:**
-1. **Command Handler:** Manages the various commands issued by the users and routes them to the appropriate functions.
-2. **Business Logic:** Implements the core functionalities such as adding books, searching for references, generating reports, and validating inputs.
-3. **Error Handler:** Provides detailed and actionable error messages to users.
-4. **Onboarding Module:** Guides new users through initial setup and familiarizes them with the bot's commands.
+
+1. **File Scanner** – Scans `/input/` for new PDFs.
+2. **PDF Parser** – Extracts text using `PyMuPDF`.
+3. **Classifier** – Detects Dewey Decimal category based on content (via keyword match or embeddings).
+4. **Filename Builder** – Generates output filenames using Dewey + category.
+5. **Exporter** – Writes `.txt`, `.md`, `.jsonl` to `/output/`.
+6. **Error Handler** – Logs and displays friendly feedback.
 
 **Responsibilities:**
-- Process user commands and execute corresponding actions.
-- Handle business logic for library management.
-- Ensure proper flow of data between the client layer and the data layer.
 
-**Breakdown:**
-- **Command Handler:**
-  - Maps user commands to functions.
-  - Validates user input and handles errors.
-  - Coordinates with business logic for processing commands.
-- **Business Logic:**
-  - Implements book logging by interacting with the data layer.
-  - Generates reports by fetching data from the database.
-  - Manages user preferences and ensures they are stored correctly.
-- **Error Handler:**
-  - Extends error handling to provide detailed messages and suggestions for resolving common mistakes.
-- **Onboarding Module:**
-  - Implements an interactive setup process, helping users configure key settings and become familiar with the bot.
+- Modular control of the processing pipeline
+- Support batch processing
+- Allow CLI flags and options
 
 ---
 
-## Data Layer
-**Description:** This layer is responsible for data storage, retrieval, and management. It interacts with the database to perform CRUD operations.
+## 🗃 Data Layer
+
+**Description:** Manages persistent and intermediate outputs. Future-ready for database or vector store integrations.
 
 **Components:**
-1. **Database (Azure SQL):** Stores book references and other relevant information.
-2. **Data Access Objects (DAO):** Interfaces for interacting with the database.
-3. **Data Management Module:** Handles data backup, export, and integrity.
+
+1. **File Storage (local):** `/input/`, `/output/`
+2. **Structured Output Format:** `.jsonl`, `.md`, `.txt`
+3. *(Optional)* Local SQLite DB or CSV log for summaries
 
 **Responsibilities:**
-- Store and retrieve book data.
-- Ensure data integrity and security.
-- Manage database schema and perform necessary migrations.
 
-**Breakdown:**
-- **Database (Azure SQL):**
-  - Stores book references, categories, and other metadata.
-  - Uses tables with fields such as `id`, `title`, `dewey_decimal`, `category`, and `description`.
-- **Data Access Objects (DAO):**
-  - Provides methods for CRUD operations.
-  - Ensures data is stored and retrieved efficiently.
-  - Handles database connections and queries.
-- **Data Management Module:**
-  - Manages regular data backups and supports CSV export functionality.
-  - Ensures data integrity through regular checks and automated cleaning processes.
+- Store processed data in portable, AI-ready formats
+- Maintain metadata logs for future querying
+- Ensure consistency in output formatting and versioning
 
 ---
 
-## Integration Layer
-**Description:** This layer handles integration with external services such as generative AI for report generation and NLU for understanding user input.
+## 🔌 Integration Layer
+
+**Description:** Interfaces with future external tools or services.
 
 **Components:**
-1. **Generative AI (OpenAI GPT):** Generates summary reports and insights from book data.
-2. **NLU Model (SpaCy or NLTK):** Processes and understands user inputs for better interaction.
+
+1. **Embedding Generator (OpenAI, HuggingFace)**
+2. **Vector Store (FAISS, Weaviate)**
+3. *(Future)* Web UI / FastAPI endpoint
 
 **Responsibilities:**
-- Integrate with external APIs and services.
-- Process and analyze data using AI and NLU models.
-- Ensure seamless communication between the application layer and external services.
 
-**Breakdown:**
-- **Generative AI (OpenAI GPT):**
-  - Generates natural language reports based on library data.
-  - Integrates via API calls, processing data and returning summaries.
-- **NLU Model (SpaCy or NLTK):**
-  - Processes user inputs to understand and correct errors in book titles or categories.
-  - Enhances user interaction by providing accurate responses based on natural language understanding.
+- Export data to downstream ML/AI models
+- Enable semantic search, RAG, or fine-tuning
+- Accept external uploads via CLI/Web
 
 ---
 
-## Updated Architecture Overview
+## 🔐 Security Layer (Cross-Cutting Concern)
 
-1. **Command Aliases:**
-   - Implement an alias resolution system within the command handler.
-   - Maps alias commands (e.g., `/add`) to their respective full commands (e.g., `/add_book`).
+**Description:** Security and privacy are built into every part of the pipeline.
 
-2. **Book Categorization:**
-   - Update the database schema to include a category field.
-   - Modify the command handler to accept and store categories when logging books.
+**Practices Implemented:**
 
-3. **Report Generation:**
-   - Add a reporting function that aggregates books by category and generates a summary report.
-   - Trigger this function via the `/summary` command.
+### 1. **Environment-based Configuration**
 
-4. **Data Backup/Export Feature:**
-   - Implement a backup and export system to handle exporting the Azure SQL database to a CSV file.
-   - Ensure data integrity during export.
+- Secrets (API keys, paths) managed via `.env` file (never hardcoded)
+- Example: `OPENAI_API_KEY`, `OUTPUT_DIR`
 
-5. **Customization of Responses:**
-   - Add a user preferences component to store settings like preferred response style (e.g., formal, casual) and language preference (English or Spanish).
-   - Adjust responses based on user preferences.
+### 2. **Input Sanitization**
 
-6. **Automated Data Cleaning:**
-   - Enhance the data validation module to regularly check for duplicates or anomalies in the data.
-   - Notify users to review and correct any flagged entries.
+- Validate file types (only `.pdf` allowed)
+- Escape file names and clean paths to prevent injection or traversal attacks
 
-7. **Interactive Setup Process:**
-   - Develop an onboarding module that guides new users through the initial setup process.
-   - Ensure the onboarding process is available in both English and Spanish.
+### 3. **Safe Output Handling**
 
-8. **Robust Testing Framework:**
-   - Expand the testing suite to cover new features, especially edge cases and varied user inputs.
-   - Regularly update test cases to ensure continued stability as the bot evolves.
+- Overwrite protection (check if output file already exists)
+- Temp folder handling (if batch crash occurs, no data loss)
 
-9. **NLP Integration:**
-   - Include an NLP module in the command handler to process natural language inputs.
-   - Map user phrases to corresponding commands, allowing conversational interaction.
+### 4. **Optional HTTPS/SSL Handling (For Web/Cloud)**
 
-10. **User Interaction Flow:**
-    - Support a dynamic flow that adapts to user inputs in natural language.
-    - Ensure smooth interactions with suggestions and feedback in the user's preferred language.
+- Enforce HTTPS if web interface is added
+- All APIs must validate SSL certs by default
 
-11. **Security Enhancements:**
-    - Implement token management using environment variables.
-    - Ensure HTTPS is used for secure communication.
-    - Sanitize all user inputs to prevent SQL injection and other security risks.
+### 5. **Access Control (Future)**
 
-12. **CI/CD Pipeline:**
-    - Set up a CI/CD pipeline to automate testing and deployment.
-    - Use GitHub Actions for continuous integration and delivery.
+- If exposed via API or UI, implement token-based access with scoped roles
+
+### 6. **Audit Logging**
+
+- Track which files were processed, renamed, or exported
+- Useful for educational and regulatory transparency
+
+---
+
+## 📐 Future Architecture Enhancements
+
+1. **CLI Framework with `argparse` or `click`**
+    - Support commands like `-process`, `-export`, `-summary`, `-help`
+2. **Modular Plugin System**
+    - Users can drop their own `classifier.py` or `exporter.py`
+3. **Web Interface (Minimal)**
+    - Flask/FastAPI-based uploader with visual summary display
+4. **Embeddings & Search Engine**
+    - Store vectors and enable question answering across processed docs
+5. **Multilingual NLP Pipeline**
+    - Language detection and internationalized output formatting
+6. **Dockerized Deployment**
+    - One-click container for reproducibility
+7. **CI/CD for Testing**
+    - GitHub Actions for linting, testing, and validation on push
+
+---
+
+## ✅ Summary
+
+OpenPages AI is designed to scale from a personal knowledge processor to a fully modular AI-ready tool. Its architecture ensures:
+
+- ✨ Simplicity for beginners
+- 🧠 Extensibility for developers
+- 🛡️ Security and ethics for real-world use
+
+Let’s keep it clean, open, and powerful.
