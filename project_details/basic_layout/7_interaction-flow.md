@@ -1,87 +1,237 @@
-# Interaction Flow
+# 🤖 Interaction Flow – OpenPages AI
 
-## Initial Setup and Onboarding
-**User:** "Hey bot, how do I get started?"
-**Bot (English):** "Welcome! Let's get you set up. Would you like to log your book references or customize your experience?"
-
-**User:** "Hola bot, ¿cómo empiezo?"
-**Bot (Spanish):** "¡Bienvenido! Vamos a configurarlo. ¿Te gustaría registrar tus referencias de libros o personalizar tu experiencia?"
-
-**Components Involved:** Onboarding Module, Command Handler, User Preferences
+This document outlines how users interact with the OpenPages AI pipeline, covering onboarding, file processing, output generation, multilingual feedback, and error handling. The flow is designed to be scalable for terminal/CLI use and future web interfaces.
 
 ---
 
-## Adding a Book Reference
-**User:** "B. 005.43 - Operating systems - GNU GRUB Manual"
-**Bot (English):** "Got it! The reference 'GNU GRUB Manual' has been added under 'Operating systems' with Dewey Decimal 005.43. Do you want to add more details or categorize further?"
+## 🪠 Initial Setup & Onboarding (Detailed)
 
-**User:** "B. 005.43 - Sistemas operativos - Manual de GNU GRUB"
-**Bot (Spanish):** "¡Entendido! La referencia 'Manual de GNU GRUB' ha sido añadida bajo 'Sistemas operativos' con el número decimal Dewey 005.43. ¿Deseas añadir más detalles o categorizarlo aún más?"
+### 👩‍💻 Step 1: Clone the Repository
 
-**Components Involved:** Command Handler, Book Logger, Database Schema
+```bash
+git clone https://github.com/your-username/openpages-ai.git
+cd openpages-ai
 
----
+```
 
-## Generating a Summary Report
-**User:** "Can you give me a summary of my library?"
-**Bot (English):** "Here's your library summary: Operating systems: 3 books, Mathematics: 5 books."
+### 🐍 Step 2: Set Up the Python Environment
 
-**User:** "¿Puedes darme un resumen de mi biblioteca?"
-**Bot (Spanish):** "Aquí está tu resumen de la biblioteca: Sistemas operativos: 3 libros, Matemáticas: 5 libros."
+```bash
+python -m venv venv
+source venv/bin/activate      # macOS/Linux
+venv\Scripts\activate         # Windows
 
-**Components Involved:** Reporting Module, Command Handler, Database Schema
+```
 
----
+### 📦 Step 3: Install Dependencies
 
-## Exporting Data
-**User:** "I need to export my data."
-**Bot (English):** "No problem! Here's a CSV file with your book data: [Download Link]."
+```bash
+pip install -r requirements.txt
 
-**User:** "Necesito exportar mis datos."
-**Bot (Spanish):** "No hay problema. Aquí tienes un archivo CSV con tus datos de libros: [Enlace de descarga]."
+```
 
-**Components Involved:** Data Management Module, Command Handler, Database Schema
+### 📂 Step 4: Add Input Files
 
----
+```bash
+mkdir input output
+# Place your PDF files inside /input
 
-## Handling Errors
-**User:** "B. 999 - Fiction - Fantasy Book"
-**Bot (English):** "It looks like '999' isn't a standard Dewey Decimal number. Would you like to create a custom category for this reference?"
+```
 
-**User:** "B. 999 - Ficción - Libro de Fantasía"
-**Bot (Spanish):** "Parece que '999' no es un número decimal Dewey estándar. ¿Te gustaría crear una categoría personalizada para esta referencia?"
+Example:
 
-**Components Involved:** Command Handler, Error Handler, Book Logger, Database Schema
+```
+openpages-ai/
+├── input/
+│   └── Quantum_Mechanics_Notes.pdf
+├── output/
 
----
+```
 
-## Customized Responses
-**User:** "Can you be more casual?"
-**Bot (English):** "Sure thing! From now on, I'll keep it casual. Anything else?"
+### ▶️ Step 5: Run the Processor
 
-**User:** "¿Puedes ser más informal?"
-**Bot (Spanish):** "¡Claro que sí! A partir de ahora, seré más informal. ¿Algo más?"
+```bash
+python main.py
 
-**Components Involved:** Command Handler, User Preferences, Response Generator
+```
 
----
+Terminal Output:
 
-## Checking Book Categories
-**User:** "How's my library looking?"
-**Bot (English):** "You have 5 books categorized under 'Mathematics' and 3 under 'Operating systems'."
+```
+📘 Processing: Quantum_Mechanics_Notes.pdf
+🚗 Saved: 530.12_Physics_Quantum_Mechanics_Notes.txt
+🚗 Saved: 530.12_Physics_Quantum_Mechanics_Notes.md
+🚗 Saved: 530.12_Physics_Quantum_Mechanics_Notes.jsonl
+🧠 Suggested Dewey: 530.12 — Physics
 
-**User:** "¿Cómo va mi biblioteca?"
-**Bot (Spanish):** "Tienes 5 libros categorizados bajo 'Matemáticas' y 3 bajo 'Sistemas operativos'."
-
-**Components Involved:** Reporting Module, Command Handler, Database Schema
+```
 
 ---
 
-## Interactive Flow Example
-1. **User:** "B. 510 - Mathematics - Calculus Handbook"
-2. **Bot (English):** "Got it! The reference 'Calculus Handbook' has been added under 'Mathematics' with Dewey Decimal 510."
-3. **Bot:** "Would you like to add another book or view a summary?"
-4. **User:** "View a summary."
-5. **Bot (English):** "Here's your current library summary: Mathematics: 6 books, Operating systems: 3 books."
+## 📂 File Naming Convention (Dewey-Based)
 
-**Components Involved:** Command Handler, Book Logger, Reporting Module, Database Schema
+All output files are named using the Dewey Decimal number and category, to support better organization:
+
+**Pattern:**
+
+```
+<Dewey>_<Category>_<OriginalFileName>.<ext>
+
+```
+
+**Examples:**
+
+- `530.12_Physics_Quantum_Mechanics_Notes.jsonl`
+- `006.3_AI_AI_Essentials.md`
+
+This makes sorting and retrieval much easier in large-scale knowledge bases.
+
+**Components Involved:**`Classifier`, `Filename Builder`, `Exporter`
+
+---
+
+## 📄 Processing a PDF Document
+
+**User Action:**
+
+- Place PDF(s) in `/input/`
+- Run `python main.py`
+
+**System Response (EN):**
+
+> ✅ Processed: AI_Essentials.pdf — Category: Artificial Intelligence, Dewey: 006.3
+> 
+
+**System Response (ES):**
+
+> ✅ Procesado: AI_Essentials.pdf — Categoría: Inteligencia Artificial, Dewey: 006.3
+> 
+
+**Generated Files:**
+
+- `006.3_AI_AI_Essentials.txt`
+- `006.3_AI_AI_Essentials.md`
+- `006.3_AI_AI_Essentials.jsonl`
+
+**Modules:** `Parser`, `Classifier`, `Exporter`
+
+---
+
+## 🧠 Suggesting a Dewey Category
+
+**Logic:**
+
+- AI/Machine Learning: `006.3`
+- Quantum Physics: `530.12`
+- Mathematics: `510`
+
+**Output Example (EN):**
+
+> 🧠 Suggested Dewey: 510 — Mathematics
+> 
+
+**Output Example (ES):**
+
+> 🧠 Dewey sugerido: 510 — Matemáticas
+> 
+
+**Modules:** `Classifier`, `Keyword Matching`, `Future Embedding Engine`
+
+---
+
+## 📈 Export Summary Report *(Future)*
+
+**User:**
+
+```bash
+python main.py --summary
+
+```
+
+**Output (EN):**
+
+> Library Summary: 3 under Mathematics, 2 under Quantum Physics.
+> 
+
+**Output (ES):**
+
+> Resumen: 3 bajo Matemáticas, 2 bajo Física Cuántica.
+> 
+
+**Modules:** `Summary Generator`, `Database/Log Reader`
+
+---
+
+## 📅 Exporting Data *(Future)*
+
+**User:**
+
+```bash
+python main.py --export --format=csv
+
+```
+
+**System Response:**
+
+> 📂 Exported summary_export.csv to /output
+> 
+
+**Modules:** `Exporter`, `Report Builder`, `CLI Handler`
+
+---
+
+## ⚠️ Handling Errors
+
+**Scenario:** User adds a non-PDF file to `/input/`
+
+**Output (EN):**
+
+> ⚠️ Error processing 'notes.txt': Invalid file format. Please use PDF.
+> 
+
+**Output (ES):**
+
+> ⚠️ Error al procesar 'notes.txt': Formato inválido. Por favor usa PDF.
+> 
+
+**Modules:** `Error Handler`, `File Validator`
+
+---
+
+## 🚀 Interactive Session Example
+
+1. **User:** Places `Calculus_Intro.pdf` into `/input/`
+2. **System:**
+    
+    > 📘 Processing: Calculus_Intro.pdf
+    > 
+    > 
+    > ✅ Saved: 510_Mathematics_Calculus_Intro.jsonl
+    > 
+3. **System:**
+    
+    > Would you like a summary? (Coming soon)
+    > 
+4. **User:** `-summary`
+5. **System:**
+    
+    > Current breakdown: 4 docs in Mathematics, 2 in Physics
+    > 
+
+**Modules:** `Command Handler`, `Book Logger`, `Classifier`, `Exporter`
+
+---
+
+## 🔄 Multilingual UX
+
+All system outputs are prepared to support both **English and Spanish**. A language preference flag or auto-detection can be added later.
+
+| Prompt | English | Spanish |
+| --- | --- | --- |
+| Startup | "Ready to process your documents!" | "¡Listo para procesar tus documentos!" |
+| Error | "Invalid file format." | "Formato de archivo inválido." |
+| Dewey | "Suggested Dewey: 510" | "Dewey sugerido: 510" |
+
+**Modules:** `Response Generator`, `Language Handler`
+
+---
