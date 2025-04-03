@@ -49,8 +49,13 @@ python main.py
 - Interfaz web o CLI interactiva
 - Publicación open source completa (GitHub + ENS domain)
 
-## 🌱 Licencia
-MIT — Libre para uso educativo, personal o como base para futuros desarrollos éticos.
+## 📄 Licencia
+
+Este proyecto está licenciado bajo los términos de la Apache License 2.0.  
+Podés usar, modificar y distribuir este código libremente, siempre que incluyas la atribución correspondiente.
+
+© diegoabeltran_16 2024
+
 
 ## ✨ Contribuciones
 Este proyecto es un paso hacia la construcción de herramientas de acceso libre al conocimiento. Si compartís esta visión, ¡contribuí, comentá o usalo como inspiración!
