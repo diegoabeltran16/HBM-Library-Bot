@@ -1,9 +1,38 @@
-# Ignore Python cache and compiled files
+# ────────────────
+# 🐍 Python cache & compiled files
+# ────────────────
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Ignore environment variable file to prevent exposing sensitive credentials
-configs\.env
+# ────────────────
+# 🔐 Entornos virtuales y variables sensibles
+# ────────────────
+.venv/
+venv/
+.env
+.env.*
 configs/
+configs/.env
 
-#Archivos multimedia
+# ────────────────
+# 📂 Directorios de entrada y salida (solo estructura)
+# ────────────────
+input/
+output/
+!input/.gitkeep
+!output/.gitkeep
+
+# ────────────────
+# 🖼️ Multimedia y documentación interna
+# ────────────────
 media/
+project_details/
+
+# ────────────────
+# 🧠 Archivos específicos de IDE y sistema
+# ────────────────
+.vscode/
+.DS_Store
+Thumbs.db
