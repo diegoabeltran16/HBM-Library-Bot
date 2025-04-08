@@ -1,5 +1,8 @@
 # 📘 PDF Knowledge Pipeline
 
+[![Run Parser Tests](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml/badge.svg)](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml)
+
+
 Este es un proyecto personal y educativo que automatiza el procesamiento de archivos PDF con contenido científico o técnico. Está diseñado para ser simple, modular y totalmente offline. El sistema extrae texto de los documentos, sugiere una categoría temática (por ejemplo, Inteligencia Artificial o Física Cuántica) basada en palabras clave, y genera salidas listas para futuras aplicaciones en IA como embeddings o fine-tuning.
 
 ## 🎯 Objetivo
@@ -59,3 +62,4 @@ Podés usar, modificar y distribuir este código libremente, siempre que incluya
 
 ## ✨ Contribuciones
 Este proyecto es un paso hacia la construcción de herramientas de acceso libre al conocimiento. Si compartís esta visión, ¡contribuí, comentá o usalo como inspiración!
+
