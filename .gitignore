@@ -3,6 +3,7 @@ __pycache__/
 
 # Ignore environment variable file to prevent exposing sensitive credentials
 configs\.env
-
 configs/
 
+#Archivos multimedia
+media/
