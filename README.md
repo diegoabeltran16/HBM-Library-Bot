@@ -22,9 +22,6 @@ pdf-intel/
 ├── input/             # PDFs originales a procesar
 ├── output/            # Archivos procesados
 ├── main.py            # Script principal que orquesta todo
-├── parser.py          # Función de extracción de texto con PyMuPDF
-├── classifier.py      # Lógica para asignar categoría y Dewey
-├── exporter.py        # Guarda los archivos .txt, .md, .jsonl
 ├── README.md          # Este documento
 ```
 
