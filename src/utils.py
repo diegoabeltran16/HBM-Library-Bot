@@ -5,7 +5,7 @@ Funciones auxiliares para soporte al parser:
 - Evaluación de complejidad estructural de un PDF
 - Detección de fórmulas matemáticas u objetos sospechosos
 """
-
+from unidecode import unidecode
 import fitz
 import re
 
@@ -34,3 +34,12 @@ def contiene_formula(texto):
     proporcion = len(simbolos) / len(texto)
 
     return proporcion > 0.3  # Más del 30% símbolos → se descarta
+
+
+
+def normalizar_texto(texto: str) -> str:
+    """
+    Convierte el texto a minúsculas y remueve acentos.
+    Mejora las comparaciones en búsquedas semánticas.
+    """
+    return unidecode(texto.lower())

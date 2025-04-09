@@ -1,5 +1,6 @@
 # src/classifier.py
 
+from .utils import normalizar_texto
 import re
 
 # ===============================
@@ -11,7 +12,8 @@ CATEGORIAS_DEWEY = {
     "Religion": (["bible", "god", "theology", "religion"], "200"),
     "Social Sciences": (["economy", "education", "law", "government", "sociology"], "300"),
     "Language": (["grammar", "linguistics", "translation", "language"], "400"),
-    "Natural Sciences and Mathematics": (["mathematics", "physics", "biology", "chemistry", "science","física", "biología", "química", "ciencia"], "500"),
+    "Natural Sciences and Mathematics": (["mathematics", "physics", "biology", "chemistry", "science","física", "biología", "química", "ciencia","mathematics", "physics", "biology", "chemistry", "science",
+        "fisica", "biologia", "quimica", "ciencia", "cuantica"], "500"),
     "Technology": (["engineering", "medicine", "software", "ai", "agriculture"], "600"),
     "The Arts": (["music", "drawing", "photography", "design", "sports"], "700"),
     "Literature": (["poetry", "novel", "fiction", "essay", "drama"], "800"),
@@ -37,10 +39,7 @@ def clasificar_documento(texto: str) -> dict:
 
 
 def clasificar_tematica(texto: str) -> tuple:
-    """
-    Detecta la categoría y código Dewey en base a palabras clave.
-    """
-    texto = texto.lower()
+    texto = normalizar_texto(texto)
 
     for categoria, (palabras, codigo) in CATEGORIAS_DEWEY.items():
         for palabra in palabras:
@@ -48,6 +47,7 @@ def clasificar_tematica(texto: str) -> tuple:
                 return categoria, codigo
 
     return "General Works", "000"
+
 
 
 def extraer_titulo(texto: str) -> str:
