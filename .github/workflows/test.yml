@@ -1,5 +1,5 @@
 # .github/workflows/test.yml
-name: 🧪 Run Parser Tests
+name: 🧪 Run Project Tests
 
 on:
   push:
