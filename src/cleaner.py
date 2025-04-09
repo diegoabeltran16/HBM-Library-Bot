@@ -4,7 +4,7 @@ import re
 import unicodedata
 
 # 🔧 Lista de símbolos decorativos considerados como "ruido visual"
-SIMBOLOS_RUIDO = {'----', '***', '///', '...', '__', '==', '~~~'}
+SIMBOLOS_RUIDO = {'----', '***', '///', '...', '__', '==', '~~~', '====='}
 
 # 🔹 1. Normaliza caracteres Unicode a forma NFC
 def normalizar_unicode(texto):
@@ -25,7 +25,7 @@ def eliminar_lineas_ruido(texto):
             continue
         if strip in SIMBOLOS_RUIDO:
             continue
-        if re.match(r'^[\-\*\.\|\\_]{3,}$', strip):
+        if re.match(r'^[\-\*\.\|\\_=~]{3,}$', strip):
             continue
         if len(strip) < 3 and not strip.isalpha():
             continue
