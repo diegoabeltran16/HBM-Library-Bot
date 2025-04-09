@@ -2,10 +2,7 @@
 
 """
 Script principal del Dewey Pipeline 🧠📘
-
-Procesa todos los archivos PDF dentro de /input
-y genera versiones limpias, clasificadas y exportadas
-en /output como .txt, .md y .jsonl.
+Procesa todos los archivos PDF dentro de /input/** y genera salidas en /output
 """
 
 import os
@@ -17,12 +14,13 @@ from src.classifier import clasificar_documento
 from src.exporter import exportar_archivos
 from src.logger import log_mensaje
 
-# Directorio donde están los PDFs a procesar
 INPUT_DIR = "input"
 
 def main():
     print("🚀 Iniciando Dewey Pipeline...")
-    archivos_pdf = [f for f in Path(INPUT_DIR).glob("*.pdf")]
+
+    # Buscar archivos PDF recursivamente
+    archivos_pdf = list(Path(INPUT_DIR).rglob("*.pdf"))
 
     if not archivos_pdf:
         print("⚠️  No se encontraron archivos PDF en la carpeta 'input/'")
@@ -32,30 +30,35 @@ def main():
 
     for archivo in archivos_pdf:
         ruta = str(archivo)
-        nombre_archivo = archivo.stem  # sin la extensión .pdf
+        nombre_archivo = archivo.stem
 
         try:
-            # 1️⃣ Extracción inteligente
+            # 1️⃣ Extracción de texto
             texto_crudo = extract_text(ruta)
 
-            # 2️⃣ Limpieza profunda y opcionalmente modo Markdown
+            # 2️⃣ Limpieza profunda
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
 
-            # 3️⃣ Clasificación temática y metadatos
-            tipo, categoria, dewey, titulo, autor = clasificar_documento(texto_limpio)
+            # 3️⃣ Clasificación y metadatos
+            resultado = clasificar_documento(texto_limpio)
+            tipo = Path(archivo).parent.name  # nombre de carpeta como tipo
+            categoria = resultado["categoria"]
+            dewey = resultado["dewey"]
+            titulo = resultado["titulo"]
+            autor = resultado["autor"]
 
-            # 4️⃣ Exportar en los tres formatos
+            # 4️⃣ Exportar
             exportar_archivos(tipo, titulo, texto_limpio, categoria, dewey, autor)
 
-            # 5️⃣ Mostrar feedback amigable
+            # 5️⃣ Logs
             log_mensaje("clasificacion", ruta, categoria, dewey)
             log_mensaje("export_ok", ruta)
 
         except Exception as e:
-            log_mensaje("error", ruta, detalle=str(e))
+            print(f"❌ Error procesando {ruta}: {e}")
+            log_mensaje("error", archivo.name)
 
     print("✅ Pipeline finalizado con éxito.")
 
-# Punto de entrada
 if __name__ == "__main__":
     main()
