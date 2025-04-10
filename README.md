@@ -2,15 +2,34 @@
 
 ![](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml/badge.svg)
 
+---
+
+## 🎯 Objetivo General
+
+Facilitar el análisis y organización de literatura científica con una herramienta local, ética y extensible.
+
+---
+
+## 🔧 ¿Qué hace el pipeline?
+
+- 📄 Extrae texto de PDFs técnicos o académicos usando [`PyMuPDF`](https://pymupdf.readthedocs.io/en/latest/) o [`pdfplumber`](https://github.com/jsvine/pdfplumber)
+
+- 🧹 Limpia el texto para que sea legible y apto para NLP
+- 📚 Clasifica el contenido según la clasificación Dewey (ej. 500 – Ciencias Naturales)
+- ✍️ Extrae título y autor automáticamente
+- 💾 Exporta tres formatos listos para IA:
+    - `.txt`: texto plano
+    - `.md`: formato Markdown con metadatos
+    - `.jsonl`: párrafos individuales para NLP / embeddings
+
+---
 ## Melvil Dewey y el Acceso Abierto al Conocimiento
 
-> “La eficiencia y la organización son el puente hacia la democratización del saber.”
-> 
-> 
-> — *Melvil Dewey (reinterpretado para el siglo XXI)*
+> ✨ *"Mi trabajo de vida es hacer más fácil el camino hacia el conocimiento."*  
+> — **Melvil Dewey** *
 > 
 
-El nombre y propósito de este proyecto están profundamente inspirados en **Melvil Louis Kossuth Dewey** (1851–1931), bibliotecólogo, reformador educativo y visionario de la organización del conocimiento.
+El nombre y propósito de este proyecto están profundamente ligados al trabajo de **Melvil Louis Kossuth Dewey** (1851–1931), bibliotecólogo, reformador educativo y visionario de la organización del conocimiento.
 
 ### 🧠 ¿Qué hizo Dewey?
 
@@ -33,27 +52,6 @@ Extrae texto, lo limpia, lo clasifica según la *Clasificación Decimal Dewey*, 
 > 🧠 Ideal para estudiantes, investigadores, autodidactas, y desarrolladores apasionados por el conocimiento abierto.
 > 
 
----
-
-## 🎯 Objetivo General
-
-Facilitar el análisis y organización de literatura científica con una herramienta local, ética y extensible.
-
----
-
-## 🔧 ¿Qué hace el pipeline?
-
-- 📄 Extrae texto de PDFs técnicos o académicos usando [`PyMuPDF`](https://pymupdf.readthedocs.io/en/latest/) o [`pdfplumber`](https://github.com/jsvine/pdfplumber)
-
-- 🧹 Limpia el texto para que sea legible y apto para NLP
-- 📚 Clasifica el contenido según la clasificación Dewey (ej. 500 – Ciencias Naturales)
-- ✍️ Extrae título y autor automáticamente
-- 💾 Exporta tres formatos listos para IA:
-    - `.txt`: texto plano
-    - `.md`: formato Markdown con metadatos
-    - `.jsonl`: párrafos individuales para NLP / embeddings
-
----
 
 ## ▶️ ¿Cómo usarlo?
 
