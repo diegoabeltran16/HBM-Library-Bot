@@ -25,7 +25,11 @@ MENSAJES = {
     "salida_creada": {
         "es": "📁 Archivos exportados en carpeta /output",
         "en": "📁 Files exported to /output folder"
-    }
+    },
+    "error": {
+    "es": "❌ Error procesando",
+    "en": "❌ Error processing"
+}
 }
 
 # ─────────────────────────────────────────────────────────────
