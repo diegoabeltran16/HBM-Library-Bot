@@ -2,6 +2,30 @@
 
 ![](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml/badge.svg)
 
+## Melvil Dewey y el Acceso Abierto al Conocimiento
+
+> “La eficiencia y la organización son el puente hacia la democratización del saber.”
+> 
+> 
+> — *Melvil Dewey (reinterpretado para el siglo XXI)*
+> 
+
+El nombre y propósito de este proyecto están profundamente inspirados en **Melvil Louis Kossuth Dewey** (1851–1931), bibliotecólogo, reformador educativo y visionario de la organización del conocimiento.
+
+### 🧠 ¿Qué hizo Dewey?
+
+- 🌐 **Creador del Dewey Decimal Classification (DDC)**: un sistema lógico y modular para clasificar todo el conocimiento humano, aún vigente en miles de bibliotecas del mundo.
+- 📦 **Inspirado en Francis Bacon**: estructuró el saber en ramas que pudieran ser ordenadas, consultadas y ampliadas.
+- 📚 **Fundador de la American Library Association (ALA)** y la primera escuela de bibliotecología.
+- 🚐 **Promotor de las bibliotecas viajeras**: acercó los libros a comunidades rurales, entendiendo la información como bien público.
+
+### 🌱 ¿Qué hereda este proyecto?
+
+- **Organización estructurada del conocimiento científico** (vía clasificación Dewey y output estandarizado).
+- **Simplicidad de acceso**, desde la terminal y sin servicios externos.
+- **Compromiso ético con la educación libre**, la modularidad del software y la soberanía de los datos personales.
+- **Portabilidad y autonomía**, como las bibliotecas viajeras... pero ahora en `.jsonl` 😉
+
 **Dewey Pipeline** es una herramienta educativa y modular que automatiza el procesamiento de documentos en formato PDF.
 
 Extrae texto, lo limpia, lo clasifica según la *Clasificación Decimal Dewey*, y genera salidas listas para sistemas de IA o uso humano.
