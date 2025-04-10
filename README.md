@@ -1,62 +1,110 @@
-# 📘 PDF Knowledge Pipeline
+# 📘 Dewey Pipeline – Procesamiento Inteligente de PDFs en forma de biblioteca publica :D
 
-[![Run Project Tests](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml/badge.svg)](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml)
+![](https://github.com/diegoabeltran16/dewey-pipeline/actions/workflows/test.yml/badge.svg)
 
+**Dewey Pipeline** es una herramienta educativa y modular que automatiza el procesamiento de documentos en formato PDF.
 
-Este es un proyecto personal y educativo que automatiza el procesamiento de archivos PDF con contenido científico o técnico. Está diseñado para ser simple, modular y totalmente offline. El sistema extrae texto de los documentos, sugiere una categoría temática (por ejemplo, Inteligencia Artificial o Física Cuántica) basada en palabras clave, y genera salidas listas para futuras aplicaciones en IA como embeddings o fine-tuning.
+Extrae texto, lo limpia, lo clasifica según la *Clasificación Decimal Dewey*, y genera salidas listas para sistemas de IA o uso humano.
 
-## 🎯 Objetivo
-Crear una herramienta que facilite la organización y el análisis de textos académicos, priorizando el acceso libre y el respeto por los derechos de autor. Ideal para estudiantes, investigadores, autodidactas y desarrolladores interesados en ciencia, IA y computación.
+> 🧠 Ideal para estudiantes, investigadores, autodidactas, y desarrolladores apasionados por el conocimiento abierto.
+> 
 
-## 🔧 ¿Qué hace este proyecto?
-- Extrae texto desde archivos PDF colocados en la carpeta `/input`
-- Sugiere una categoría temática y número Dewey Decimal aproximado
-- Genera archivos en la carpeta `/output`:
-  - `.txt`: texto plano completo
-  - `.md`: versión en Markdown con encabezado
-  - `.jsonl`: archivo por párrafos, ideal para IA (embeddings, NLP, etc.)
+---
 
-## 📁 Estructura del proyecto
-```
-pdf-intel/
-├── input/             # PDFs originales a procesar
-├── output/            # Archivos procesados
-├── main.py            # Script principal que orquesta todo
-├── README.md          # Este documento
-```
+## 🎯 Objetivo General
+
+Facilitar el análisis y organización de literatura científica con una herramienta local, ética y extensible.
+
+---
+
+## 🔧 ¿Qué hace el pipeline?
+
+- 📄 Extrae texto de PDFs técnicos o académicos usando [`PyMuPDF`](https://pymupdf.readthedocs.io/en/latest/) o [`pdfplumber`](https://github.com/jsvine/pdfplumber)
+
+- 🧹 Limpia el texto para que sea legible y apto para NLP
+- 📚 Clasifica el contenido según la clasificación Dewey (ej. 500 – Ciencias Naturales)
+- ✍️ Extrae título y autor automáticamente
+- 💾 Exporta tres formatos listos para IA:
+    - `.txt`: texto plano
+    - `.md`: formato Markdown con metadatos
+    - `.jsonl`: párrafos individuales para NLP / embeddings
+
+---
 
 ## ▶️ ¿Cómo usarlo?
-1. Asegurate de tener Python 3.8+ instalado
-2. Instalá PyMuPDF:
+
 ```bash
-pip install pymupdf
-```
-3. Copiá tus archivos PDF en la carpeta `input/`
-4. Ejecutá el script:
-```bash
+bash
+CopyEdit
+# 1. Clonar el repositorio
+git clone https://github.com/diegoabeltran16/dewey-pipeline
+cd dewey-pipeline
+
+# 2. Crear entorno virtual
+python -m venv .venv
+source .venv/bin/activate  # en Windows: .venv\Scripts\activate
+
+# 3. Instalar dependencias
+pip install -r requirements.txt
+
+# 4. Colocar PDFs dentro de /input/ (pueden estar en subcarpetas)
+mkdir input/Book
+mv tu_archivo.pdf input/Book/
+
+# 5. Ejecutar el pipeline
 python main.py
+
 ```
-5. Revisa los archivos generados en `output/`
 
-## 🚧 Notas técnicas
-- El sistema actual usa reglas simples de palabras clave para clasificar el texto
-- Las salidas están listas para ser usadas en tareas de IA (embeddings, clasificación, RAG)
-- Todo el procesamiento se realiza localmente (no requiere conexión ni servicios externos)
+---
 
-## 🧠 Proyección futura
-- Mejora del clasificador con NLP y embeddings
-- Clasificación automática más precisa según contexto
-- Interfaz web o CLI interactiva
-- Publicación open source completa (GitHub + ENS domain)
+## 💡 Ejemplo de salida
+
+Archivo procesado como:
+
+```
+lua
+CopyEdit
+📁 output/
+├── essay_100_philosophy_and_psychology_aprendizaje_automatico_diego_beltran.txt
+├── essay_100_philosophy_and_psychology_aprendizaje_automatico_diego_beltran.md
+├── essay_100_philosophy_and_psychology_aprendizaje_automatico_diego_beltran.jsonl
+
+```
+
+---
+
+## 🔍 Fase actual: MVP Offline
+
+| Módulo | Estado |
+| --- | --- |
+| Extracción | ✅ PyMuPDF + heurística de layout |
+| Limpieza | ✅ Markdown-ready, preservación de semántica |
+| Clasificación | ✅ Heurística Dewey + título/autor |
+| Exportación | ✅ Organizado y AI-friendly |
+| Logger | ✅ Multilenguaje (es/en) |
+| Testing | ✅ Pytest + GitHub Actions CI |
+
+
+---
 
 ## 📄 Licencia
 
-Este proyecto está licenciado bajo los términos de la Apache License 2.0.  
+Este proyecto está licenciado bajo los términos de la **Apache License 2.0**.
+
 Podés usar, modificar y distribuir este código libremente, siempre que incluyas la atribución correspondiente.
 
-© diegoabeltran_16 2024
+© 2024 – *diegoabeltran_16*
 
+---
 
 ## ✨ Contribuciones
-Este proyecto es un paso hacia la construcción de herramientas de acceso libre al conocimiento. Si compartís esta visión, ¡contribuí, comentá o usalo como inspiración!
 
+Si compartes esta visión de acceso libre al conocimiento y te interesa empezar a contruir portafolio:
+
+- 💬 Abre issues o mejoras
+- 🧪 Añade tests
+- 🤝 Usá este proyecto como base para tu propia herramienta
+
+> "El pipeline es tuyo también. Mejorémoslo juntos." LINK de como contribuir
+>
