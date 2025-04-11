@@ -2,3 +2,4 @@ pymupdf==1.25.5
 pdfplumber
 pytest
 unidecode
+loguru>=0.7.2
