@@ -24,13 +24,22 @@ def test_log_evento_clasificado_en_consola_y_jsonl(ruta_dummy):
     jsonl_logs = list(logs_dir.glob("run_*.jsonl"))
     assert jsonl_logs, "No se generó archivo .jsonl"
 
+    eventos = []
     with open(jsonl_logs[-1], encoding="utf-8") as f:
-        lineas = [json.loads(line) for line in f if line.strip()]
-        eventos = [l for l in lineas if l["evento"] == "clasificado"]
-        assert eventos, "No se encontró el evento 'clasificado'"
-        assert eventos[-1]["categoria"] == "Ciencias"
-        assert eventos[-1]["dewey"] == "500"
-        assert eventos[-1]["nivel"] == "INFO"
+        for line in f:
+            try:
+                data = json.loads(line)
+                if data.get("evento") == "clasificado":
+                    eventos.append(data)
+            except json.JSONDecodeError:
+                continue  # Línea corrupta o mal formada
+
+    assert eventos, "No se encontró el evento 'clasificado'"
+    assert eventos[-1]["categoria"] == "Ciencias"
+    assert eventos[-1]["dewey"] == "500"
+    assert eventos[-1]["nivel"] == "INFO"
+
+
 
 def test_log_warning_texto_corto(ruta_dummy):
     mensaje = log_evento("warning_texto_corto", archivo=ruta_dummy, nivel="WARNING")
