@@ -55,27 +55,33 @@ Extrae texto, lo limpia, lo clasifica según la *Clasificación Decimal Dewey*, 
 
 ## ▶️ ¿Cómo usarlo?
 
-```bash
-bash
-CopyEdit
+
 # 1. Clonar el repositorio
+```bash
 git clone https://github.com/diegoabeltran16/dewey-pipeline
 cd dewey-pipeline
+```
 
 # 2. Crear entorno virtual
+```bash
 python -m venv .venv
 source .venv/bin/activate  # en Windows: .venv\Scripts\activate
+```
 
 # 3. Instalar dependencias
+```bash
 pip install -r requirements.txt
+```
 
 # 4. Colocar PDFs dentro de /input/ (pueden estar en subcarpetas)
+```bash
 mkdir input/Book
 mv tu_archivo.pdf input/Book/
+```
 
 # 5. Ejecutar el pipeline
+```bash
 python main.py
-
 ```
 
 ---
@@ -85,8 +91,6 @@ python main.py
 Archivo procesado como:
 
 ```
-lua
-CopyEdit
 📁 output/
 ├── essay_100_philosophy_and_psychology_aprendizaje_automatico_diego_beltran.txt
 ├── essay_100_philosophy_and_psychology_aprendizaje_automatico_diego_beltran.md
