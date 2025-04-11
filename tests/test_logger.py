@@ -3,8 +3,13 @@
 import os
 import json
 import pytest
+import sys
+from pathlib import Path
 from pathlib import Path
 from src.logger import log_evento
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 # 🌍 Forzar idioma en pruebas
 os.environ["LANG"] = "es"

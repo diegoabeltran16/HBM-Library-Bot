@@ -1,6 +1,11 @@
 # tests/test_classifier.py
 
+import sys
+from pathlib import Path
 from src.classifier import clasificar_tematica, extraer_titulo, extraer_autor, clasificar_documento
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 def test_clasificacion_tematica_naturales():
     texto = "Esta investigación explora conceptos clave de la biología y física cuántica."

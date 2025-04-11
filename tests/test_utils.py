@@ -1,4 +1,11 @@
+# tests\test_utils.py
+
+import sys
+from pathlib import Path
 from src.utils import es_pdf_complejo, contiene_formula, normalizar_texto
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 def test_es_pdf_complejo_true():
     # Este PDF tiene múltiples bloques → considerado complejo

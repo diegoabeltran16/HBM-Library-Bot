@@ -1,6 +1,12 @@
 # tests/test_validator.py
 
 import pytest
+import sys
+from pathlib import Path
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+
 from src.validator import (
     validar_texto_no_vacio,
     validar_longitud,

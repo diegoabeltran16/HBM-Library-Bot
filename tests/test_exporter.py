@@ -1,7 +1,11 @@
 # tests/test_exporter.py
-
+import sys
+from pathlib import Path
 from pathlib import Path
 from src.exporter import exportar_archivos, limpiar_nombre
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 def test_exportar_archivos_crea_todos_los_formatos():
     tipo = "Essay"

@@ -1,0 +1,8 @@
+2025-04-11T10:22:45.692025 | CLASIFICADO | 📖 Clasificado como: Ciencias (500)
+2025-04-11T10:22:45.727456 | WARNING_TEXTO_CORTO | ⚠️ Texto extraído demasiado corto. Archivo omitido.
+2025-04-11T10:22:45.738672 | ERROR_PARSE | ❌ Error procesando archivo: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-0\test_log_error_parse0\demo_test.pdf
+2025-04-11T10:22:45.751382 | PROCESAR | 📘 Procesando: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-0\test_log_individual_por_pdf0\demo_test.pdf
+2025-04-11T10:24:17.337538 | CLASIFICADO | 📖 Clasificado como: Ciencias (500)
+2025-04-11T10:24:17.360873 | WARNING_TEXTO_CORTO | ⚠️ Texto extraído demasiado corto. Archivo omitido.
+2025-04-11T10:24:17.380088 | ERROR_PARSE | ❌ Error procesando archivo: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-1\test_log_error_parse0\demo_test.pdf
+2025-04-11T10:24:17.387226 | PROCESAR | 📘 Procesando: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-1\test_log_individual_por_pdf0\demo_test.pdf

@@ -1,11 +1,15 @@
 # tests/test_cleaner.py
-
+import sys
+from pathlib import Path
 from src.cleaner import (
     limpiar_texto,
     normalizar_unicode,
     eliminar_lineas_ruido,
     limpiar_texto_completo,
 )
+
+# 🔧 Asegura que src/ sea visible desde cualquier entorno
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 # 🔹 Test 1: Limpieza básica de saltos y espacios
 def test_limpieza_espacios_y_saltos():
