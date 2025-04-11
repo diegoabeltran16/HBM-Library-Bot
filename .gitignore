@@ -38,3 +38,5 @@ output/logs/*
 !output/logs/.gitkeep
 *.log
 *.jsonl
+
+echo -e "\n# Output y logs\n/output/\n!output/.gitkeep\noutput/logs/*\n!output/logs/.gitkeep\n*.log\n*.jsonl" >> .gitignore
