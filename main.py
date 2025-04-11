@@ -12,7 +12,8 @@ from src.parser import extract_text
 from src.cleaner import limpiar_texto_completo
 from src.classifier import clasificar_documento
 from src.exporter import exportar_archivos
-from src.logger import log_evento  # Logger persistente
+from src.logger import log_evento
+from src.validator import validar_documento
 
 # Forzar idioma visual en consola
 os.environ["LANG"] = "es"
@@ -48,29 +49,25 @@ def main():
             # 2️⃣ Limpiar texto
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
 
-            # 3️⃣ Validar longitud mínima antes de clasificar
-            if len(texto_limpio.strip()) < 300:
-                log_evento("warning_texto_corto", archivo=ruta, nivel="WARNING")
-                resumen["omitidos"] += 1
-                continue
-
-            # 4️⃣ Clasificar
+            # 3️⃣ Clasificar
             resultado = clasificar_documento(texto_limpio)
             categoria = resultado.get("categoria")
             dewey = resultado.get("dewey")
             titulo = resultado.get("titulo")
             autor = resultado.get("autor")
 
-            # 5️⃣ Validar metadatos
-            if not all([titulo, autor, categoria, dewey]):
+            # 4️⃣ Validar documento completo
+            es_valido, info = validar_documento(texto_limpio, titulo, autor)
+            if not es_valido:
                 log_evento("warning_meta", archivo=ruta, nivel="WARNING")
+                print(f"⚠️  Documento omitido: {info.get('razones', [])}")
                 resumen["omitidos"] += 1
                 continue
 
-            # 6️⃣ Exportar
+            # 5️⃣ Exportar
             exportar_archivos(tipo, titulo, texto_limpio, categoria, dewey, autor)
 
-            # 7️⃣ Logging visual + estructurado
+            # 6️⃣ Logging visual + estructurado
             log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
             log_evento("export_ok", archivo=ruta, categoria=categoria, dewey=dewey)
             resumen["procesados"] += 1
