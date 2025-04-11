@@ -10,6 +10,7 @@ from pathlib import Path
 
 from src.parser import extract_text
 from src.cleaner import limpiar_texto_completo
+from src.enhancer import enriquecer_texto
 from src.classifier import clasificar_documento
 from src.exporter import exportar_archivos
 from src.logger import log_evento
@@ -64,10 +65,13 @@ def main():
                 resumen["omitidos"] += 1
                 continue
 
-            # 5️⃣ Exportar
+            # 5️⃣ Enriquecer texto (reparar cid, normalizar unicode, marcar dudosos)
+            texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta)
+
+            # 6 Exportar
             exportar_archivos(tipo, titulo, texto_limpio, categoria, dewey, autor)
 
-            # 6️⃣ Logging visual + estructurado
+            # 7 Logging visual + estructurado
             log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
             log_evento("export_ok", archivo=ruta, categoria=categoria, dewey=dewey)
             resumen["procesados"] += 1
