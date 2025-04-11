@@ -79,7 +79,7 @@ logger.add(global_log_jsonl, serialize=True, level=LOG_LEVEL)
 # ─────────────────────────────────────────────────────────────
 # 🧩 Función principal de logging
 # ─────────────────────────────────────────────────────────────
-def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str = "", nivel: str = "INFO"):
+def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str = "", nivel: str = "INFO") -> str:
     idioma = MENSAJES.get(evento, {}).get(LANG, evento)
     mensaje = idioma.format(archivo=archivo, categoria=categoria, dewey=dewey)
 
@@ -118,3 +118,5 @@ def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str =
                 f.write(f"{log_data['timestamp']} | {evento.upper()} | {mensaje}\n")
         except Exception as e:
             print(f"❌ Error escribiendo log individual: {e}")
+
+    return mensaje

@@ -6,7 +6,7 @@ import pytest
 from pathlib import Path
 from src.logger import log_evento
 
-# 🌍 Forzamos idioma en entorno CI/test
+# 🌍 Forzar idioma en pruebas
 os.environ["LANG"] = "es"
 
 @pytest.fixture
@@ -15,13 +15,9 @@ def ruta_dummy(tmp_path):
     archivo.write_text("Contenido simulado para logging.")
     return str(archivo)
 
-def test_log_evento_clasificado_en_consola_y_jsonl(capsys, ruta_dummy):
-    os.environ["LANG"] = "es"
-    log_evento("clasificado", archivo=ruta_dummy, categoria="Ciencias", dewey="500")
-
-    # ✅ Salida visual
-    salida = capsys.readouterr().out
-    assert "📖 Clasificado como: Ciencias (500)" in salida
+def test_log_evento_clasificado_en_consola_y_jsonl(ruta_dummy):
+    mensaje = log_evento("clasificado", archivo=ruta_dummy, categoria="Ciencias", dewey="500")
+    assert "📖 Clasificado como: Ciencias (500)" in mensaje
 
     # ✅ Persistencia .jsonl
     logs_dir = Path("output/logs")
@@ -36,15 +32,13 @@ def test_log_evento_clasificado_en_consola_y_jsonl(capsys, ruta_dummy):
         assert eventos[-1]["dewey"] == "500"
         assert eventos[-1]["nivel"] == "INFO"
 
-def test_log_warning_texto_corto(capsys, ruta_dummy):
-    log_evento("warning_texto_corto", archivo=ruta_dummy, nivel="WARNING")
-    salida = capsys.readouterr().out
-    assert "⚠️ Texto extraído demasiado corto" in salida
+def test_log_warning_texto_corto(ruta_dummy):
+    mensaje = log_evento("warning_texto_corto", archivo=ruta_dummy, nivel="WARNING")
+    assert "⚠️ Texto extraído demasiado corto" in mensaje
 
-def test_log_error_parse(capsys, ruta_dummy):
-    log_evento("error_parse", archivo=ruta_dummy, nivel="ERROR")
-    salida = capsys.readouterr().out
-    assert "❌ Error procesando archivo" in salida
+def test_log_error_parse(ruta_dummy):
+    mensaje = log_evento("error_parse", archivo=ruta_dummy, nivel="ERROR")
+    assert "❌ Error procesando archivo" in mensaje
 
 def test_log_individual_por_pdf(ruta_dummy):
     log_evento("procesar", archivo=ruta_dummy)
