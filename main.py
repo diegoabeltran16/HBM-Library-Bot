@@ -2,7 +2,12 @@
 
 """
 Script principal del Dewey Pipeline 🧠📘
-Procesa todos los archivos PDF dentro de /input/** y genera salidas en /output
+
+Este script recorre todos los archivos PDF en /input, ejecuta el pipeline completo (extracción, limpieza, clasificación, exportación)
+y registra eventos importantes mediante el módulo logger.
+
+📘 Para más información sobre el sistema de logging:
+Ver README.logger.md
 """
 
 import os
@@ -12,53 +17,89 @@ from src.parser import extract_text
 from src.cleaner import limpiar_texto_completo
 from src.classifier import clasificar_documento
 from src.exporter import exportar_archivos
-from src.logger import log_mensaje
+from src.logger import log_evento  # <- Logger central visual + persistente
 
 INPUT_DIR = "input"
+OUTPUT_DIR = "output"
 
 def main():
     print("🚀 Iniciando Dewey Pipeline...")
 
-    # Buscar archivos PDF recursivamente
-    archivos_pdf = list(Path(INPUT_DIR).rglob("*.pdf"))
+    # ✅ Validación inicial de carpetas
+    if not Path(INPUT_DIR).exists():
+        raise FileNotFoundError(f"El directorio de entrada '{INPUT_DIR}' no existe.")
+    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
+    archivos_pdf = list(Path(INPUT_DIR).rglob("*.pdf"))
     if not archivos_pdf:
-        print("⚠️  No se encontraron archivos PDF en la carpeta 'input/'")
+        print("⚠️ No se encontraron archivos PDF en la carpeta 'input/'")
         return
 
     print(f"🔍 Se encontraron {len(archivos_pdf)} archivos para procesar.")
 
+    resumen = {"procesados": 0, "omitidos": 0, "errores": 0}
+
     for archivo in archivos_pdf:
         ruta = str(archivo)
-        nombre_archivo = archivo.stem
+        tipo = Path(archivo).parent.name  # Carpeta como tipo
+
+        # 🔐 Verificar accesibilidad física del archivo
+        try:
+            with open(ruta, "rb") as f:
+                f.read(4)
+        except Exception:
+            log_evento("archivo_inaccesible", archivo=ruta, nivel="ERROR")
+            resumen["errores"] += 1
+            continue
 
         try:
-            # 1️⃣ Extracción de texto
+            # 1️⃣ Registro de inicio
+            log_evento("procesar", archivo=ruta)
+
+            # 2️⃣ Extracción de texto
             texto_crudo = extract_text(ruta)
 
-            # 2️⃣ Limpieza profunda
+            # 3️⃣ Limpieza
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
 
-            # 3️⃣ Clasificación y metadatos
-            resultado = clasificar_documento(texto_limpio)
-            tipo = Path(archivo).parent.name  # nombre de carpeta como tipo
-            categoria = resultado["categoria"]
-            dewey = resultado["dewey"]
-            titulo = resultado["titulo"]
-            autor = resultado["autor"]
+            if len(texto_limpio.strip()) < 300:
+                log_evento("warning_texto_corto", archivo=ruta, nivel="WARNING")
+                resumen["omitidos"] += 1
+                continue
 
-            # 4️⃣ Exportar
+            # 4️⃣ Clasificación
+            resultado = clasificar_documento(texto_limpio)
+            categoria = resultado.get("categoria")
+            dewey = resultado.get("dewey")
+            titulo = resultado.get("titulo")
+            autor = resultado.get("autor")
+
+            # 5️⃣ Validación de metadatos
+            if not all([titulo, autor, categoria, dewey]):
+                log_evento("warning_meta", archivo=ruta, nivel="WARNING")
+                resumen["omitidos"] += 1
+                continue
+
+            # 6️⃣ Exportación
             exportar_archivos(tipo, titulo, texto_limpio, categoria, dewey, autor)
 
-            # 5️⃣ Logs
-            log_mensaje("clasificacion", ruta, categoria, dewey)
-            log_mensaje("export_ok", ruta)
+            # 7️⃣ Logs estructurados
+            log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
+            log_evento("export_ok", archivo=ruta, categoria=categoria, dewey=dewey)
+            resumen["procesados"] += 1
 
         except Exception as e:
+            log_evento("error_parse", archivo=ruta, nivel="ERROR")
             print(f"❌ Error procesando {ruta}: {e}")
-            log_mensaje("error", archivo.name)
+            resumen["errores"] += 1
 
-    print("✅ Pipeline finalizado con éxito.")
+    # 🔚 Informe final
+    print(f"""
+🔚 Resumen del Pipeline:
+✔️ Procesados: {resumen['procesados']}
+⚠️ Omitidos: {resumen['omitidos']}
+❌ Errores: {resumen['errores']}
+""")
 
 if __name__ == "__main__":
     main()
