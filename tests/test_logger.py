@@ -6,6 +6,9 @@ import pytest
 from pathlib import Path
 from src.logger import log_evento
 
+# 🌍 Forzamos idioma en entorno CI/test
+os.environ["LANG"] = "es"
+
 @pytest.fixture
 def ruta_dummy(tmp_path):
     archivo = tmp_path / "demo_test.pdf"
