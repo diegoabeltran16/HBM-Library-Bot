@@ -29,3 +29,12 @@ project_details/
 .DS_Store
 Thumbs.db
 
+# Output general
+/output/*
+!output/.gitkeep
+
+# Logs y ejecución
+output/logs/*
+!output/logs/.gitkeep
+*.log
+*.jsonl

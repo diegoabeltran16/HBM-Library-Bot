@@ -1,4 +1,0 @@
-2025-04-11T10:22:45.692025-0500 | INFO | 📖 Clasificado como: Ciencias (500)
-2025-04-11T10:22:45.727456-0500 | WARNING | ⚠️ Texto extraído demasiado corto. Archivo omitido.
-2025-04-11T10:22:45.738672-0500 | ERROR | ❌ Error procesando archivo: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-0\test_log_error_parse0\demo_test.pdf
-2025-04-11T10:22:45.751382-0500 | INFO | 📘 Procesando: C:\Users\diego_dx9e5pi\AppData\Local\Temp\pytest-of-diego_dx9e5pi\pytest-0\test_log_individual_por_pdf0\demo_test.pdf

@@ -1,5 +1,0 @@
-2025-04-11T09:07:43.199267-0500 | INFO | 📘 Procesando: input\Book\pdf_formula.pdf
-2025-04-11T09:07:43.201728-0500 | WARNING | ⚠️ Texto extraído demasiado corto. Archivo omitido.
-2025-04-11T09:07:43.816578-0500 | INFO | 📘 Procesando: input\Science Article\pdf_simple.pdf
-2025-04-11T09:07:43.845656-0500 | INFO | 📖 Clasificado como: Language (400)
-2025-04-11T09:07:43.847889-0500 | INFO | ✔️ Exportación completa: [input\Science Article\pdf_simple.pdf]
