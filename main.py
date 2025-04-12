@@ -1,11 +1,10 @@
-# main.py
-
 """
 Script principal del Dewey Pipeline 🧠📘
 Procesa todos los archivos PDF dentro de /input/** y genera salidas en /output
 """
 
 import os
+import argparse
 from pathlib import Path
 
 from src.parser import extract_text
@@ -21,7 +20,7 @@ os.environ["LANG"] = "es"
 
 INPUT_DIR = "input"
 
-def main():
+def main(debug=False):
     print("🚀 Iniciando Dewey Pipeline...")
 
     archivos_pdf = list(Path(INPUT_DIR).rglob("*.pdf"))
@@ -43,6 +42,7 @@ def main():
         tipo = Path(archivo).parent.name  # Carpeta como tipo (Book, Essay, etc.)
 
         try:
+            print(f"\n📘 Procesando: {ruta}")
             # 1 Extraer texto
             texto_crudo = extract_text(ruta)
             log_evento("procesar", archivo=ruta)
@@ -51,7 +51,7 @@ def main():
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
 
             # 3 Enriquecer texto (reparar cid, normalizar unicode, marcar dudosos)
-            texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta)
+            texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta, debug=debug)
 
             # 4 Clasificar
             resultado = clasificar_documento(texto_enriquecido)
@@ -60,34 +60,41 @@ def main():
             titulo = resultado.get("titulo")
             autor = resultado.get("autor")
 
+            print(f"📖 Clasificado como: {categoria} ({dewey})")
+            print(f"📝 Título: {titulo or '[Sin título]'} | Autor: {autor or '[Sin autor]'}")
+
             # 5 Validar documento completo
             es_valido, info = validar_documento(texto_enriquecido, titulo, autor)
             if not es_valido:
-                log_evento("warning_meta", archivo=ruta, nivel="WARNING")
+                log_evento("warning_meta", archivo=ruta, nivel="WARNING", razones=info.get("razones", []))
                 print(f"⚠️  Documento omitido: {info.get('razones', [])}")
                 resumen["omitidos"] += 1
                 continue
 
-            
             # 6 Exportar
             exportar_archivos(tipo, titulo, texto_enriquecido, categoria, dewey, autor)
 
             # 7 Logging visual + estructurado
-            log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
+            log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey, nombre=nombre_archivo)
             log_evento("export_ok", archivo=ruta, categoria=categoria, dewey=dewey)
             resumen["procesados"] += 1
 
         except Exception as e:
-            log_evento("error_parse", archivo=ruta, nivel="ERROR")
+            log_evento("error_parse", archivo=ruta, nivel="ERROR", mensaje=str(e))
             print(f"❌ Error procesando {ruta}: {e}")
             resumen["errores"] += 1
 
     print(f"""
-    Resumen del Pipeline:
+📊 Resumen del Pipeline:
           ✔️ Procesados: {resumen['procesados']}
           ⚠️ Omitidos: {resumen['omitidos']}
           ❌ Errores: {resumen['errores']}
 """)
 
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Dewey Pipeline – Procesador de PDFs enriquecidos")
+    parser.add_argument("--debug", action="store_true", help="Muestra pre/post enriquecimiento")
+    args = parser.parse_args()
+
+    main(debug=args.debug)
