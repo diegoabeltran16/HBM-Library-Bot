@@ -43,33 +43,34 @@ def main():
         tipo = Path(archivo).parent.name  # Carpeta como tipo (Book, Essay, etc.)
 
         try:
-            # 1️⃣ Extraer texto
+            # 1 Extraer texto
             texto_crudo = extract_text(ruta)
             log_evento("procesar", archivo=ruta)
 
-            # 2️⃣ Limpiar texto
+            # 2️ Limpiar texto
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
 
-            # 3️⃣ Clasificar
-            resultado = clasificar_documento(texto_limpio)
+            # 3 Enriquecer texto (reparar cid, normalizar unicode, marcar dudosos)
+            texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta)
+
+            # 4 Clasificar
+            resultado = clasificar_documento(texto_enriquecido)
             categoria = resultado.get("categoria")
             dewey = resultado.get("dewey")
             titulo = resultado.get("titulo")
             autor = resultado.get("autor")
 
-            # 4️⃣ Validar documento completo
-            es_valido, info = validar_documento(texto_limpio, titulo, autor)
+            # 5 Validar documento completo
+            es_valido, info = validar_documento(texto_enriquecido, titulo, autor)
             if not es_valido:
                 log_evento("warning_meta", archivo=ruta, nivel="WARNING")
                 print(f"⚠️  Documento omitido: {info.get('razones', [])}")
                 resumen["omitidos"] += 1
                 continue
 
-            # 5️⃣ Enriquecer texto (reparar cid, normalizar unicode, marcar dudosos)
-            texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta)
-
+            
             # 6 Exportar
-            exportar_archivos(tipo, titulo, texto_limpio, categoria, dewey, autor)
+            exportar_archivos(tipo, titulo, texto_enriquecido, categoria, dewey, autor)
 
             # 7 Logging visual + estructurado
             log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
