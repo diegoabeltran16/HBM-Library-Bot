@@ -11,7 +11,7 @@ por cada entrada como tiddler individual en formato JSON, listo para importar en
 import os
 import json
 import hashlib
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
 
@@ -24,14 +24,15 @@ SCRIPT_DIR = Path(__file__).parent
 OUTPUT_DIR = SCRIPT_DIR / "tiddlers-export"
 HASH_FILE = SCRIPT_DIR / ".hashes.json"
 
-VALID_EXTENSIONS = ['.py', '.md', '.json', '.sh', '.html', '.css']
-IGNORE_DIRS = ['.git', '__pycache__', 'venv', 'dist', 'node_modules', 'output', 'tests']
+VALID_EXTENSIONS = ['.py', '.md', '.json', '.sh', '.html', '.css','.yml']
+IGNORE_DIRS = ['__pycache__', 'venv', '.venv', 'dist', 'node_modules', 'output', 'input', '.pytest_cache', 'configs', 'media', 'project_details', 'tiddlers-export'   ]
 
 LANGUAGE_MAP = {
     '.py': 'python',
     '.md': 'markdown',
     '.json': 'json',
     '.sh': 'bash',
+    '.yml': 'bash',
     '.html': 'html',
     '.css': 'css'
 }
@@ -117,8 +118,8 @@ def export_tiddlers(dry_run=False):
             "text": text_block,
             "tags": ' '.join(tags),
             "type": "text/markdown",
-            "created": datetime.utcnow().strftime('%Y%m%d%H%M%S%f')[:17],
-            "modified": datetime.utcnow().strftime('%Y%m%d%H%M%S%f')[:17],
+            "created": datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')[:17],
+            "modified": datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')[:17],
         }
 
         if dry_run:
