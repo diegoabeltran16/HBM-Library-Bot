@@ -3,3 +3,4 @@ pdfplumber
 pytest
 unidecode
 loguru>=0.7.2
+ftfy>=6.1.1

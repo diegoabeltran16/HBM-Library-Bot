@@ -1,4 +1,4 @@
-# 🌿 CÓDIGO DE CONDUCTA – Dewey Pipeline
+# 🌿 CÓDIGO DE CONDUCTA – OpenPages-pipeline
 
 **Versión 1.0 – Inspirado en la ética del conocimiento abierto**
 
@@ -6,7 +6,7 @@
 
 ## 🧭 Nuestro Compromiso
 
-Como miembros, contribuidor@s y líderes de este proyecto, nos comprometemos a hacer de la participación en **Dewey Pipeline** una experiencia libre de acoso para tod@s, sin importar edad, tamaño corporal, discapacidad visible o invisible, características sexuales, identidad y expresión de género, nivel de experiencia, educación, situación socioeconómica, nacionalidad, apariencia personal, raza, religión o identidad y orientación sexual.
+Como miembros, contribuidor@s y líderes de este proyecto, nos comprometemos a hacer de la participación en **OpenPages-pipeline** una experiencia libre de acoso para tod@s, sin importar edad, tamaño corporal, discapacidad visible o invisible, características sexuales, identidad y expresión de género, nivel de experiencia, educación, situación socioeconómica, nacionalidad, apariencia personal, raza, religión o identidad y orientación sexual.
 
 Nos comprometemos a actuar e interactuar de formas que contribuyan a una comunidad abierta, acogedora, diversa, inclusiva y saludable.
 
@@ -69,7 +69,7 @@ También aplica a quienes representen formalmente al proyecto en dichos espacios
 
 Si ves o experimentás algo que te incomoda o vulnera, escribinos a:
 
-📩 **conducta@dewey-pipeline.org** *(o al canal de contacto visible en el README)*
+📩 al canal de contacto visible en el README
 
 Tu reporte será tratado con **confidencialidad, seriedad y empatía**. Nadie será sancionado por reportar de buena fe.
 

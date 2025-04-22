@@ -1,4 +1,4 @@
-# 🛡️ Política de Seguridad – Dewey Pipeline
+# 🛡️ Política de Seguridad – OpenPages-pipeline
 
 ## 🔢 Versiones con soporte
 
@@ -6,22 +6,21 @@ En esta fase del proyecto (MVP), el soporte de seguridad se centra únicamente e
 
 | Versión   | Soporte actual     |
 |-----------|--------------------|
-| `main`    | ✅ Activa y mantenida |
-| `0.1.x`   | ❌ No mantenida     |
-| `< 0.1`   | ❌ Obsoleta         |
+| main    | ✅ Activa y mantenida |
+| 0.1.x   | ❌ No mantenida     |
+| < 0.1   | ❌ Obsoleta         |
 
 ---
 
 ## 📣 Cómo reportar una vulnerabilidad
 
-Si encuentras un problema de seguridad (por ejemplo: ejecución de código malicioso, lectura no autorizada de archivos, inyección de texto en outputs), por favor:
+Si encontrás un problema de seguridad (por ejemplo: ejecución de código malicioso, lectura no autorizada de archivos, inyección de texto en outputs), por favor:
 
 1. **No abras un issue público**.
-2. Envíanos un mensaje privado a:  
-   📩 `seguridad@dewey-pipeline.org`  
-   *(o escribe por GitHub si aún no tenemos el correo activo)*
+2. Escribinos de forma privada a:  
+   📩 seguridad@openpages.ai *(si aún no está activo, usar canal de GitHub)*
 
-Por favor incluye:
+Incluí por favor:
 
 - Una descripción clara del problema
 - Pasos para reproducirlo (si aplica)
@@ -38,10 +37,10 @@ Nos comprometemos a:
 
 ## 🧠 ¿Y si no es una vulnerabilidad crítica?
 
-Si encontraste un bug o comportamiento inesperado **pero no crítico**, abrí una [Issue](https://github.com/diegoabeltran16/dewey-pipeline/issues) con el tag `bug` o `enhancement`.
+Si encontraste un bug o comportamiento inesperado **pero no crítico**, abrí una [Issue](https://github.com/diegoabeltran16/OpenPages-pipeline/issues) con la etiqueta `bug` o `enhancement`.
 
 Tu reporte ayuda a que este proyecto sea más robusto y confiable para tod@s.
 
 ---
 
-**Gracias por hacer que Dewey Pipeline sea un espacio más seguro y responsable.**
+**Gracias por contribuir a que OpenPages-pipeline sea una herramienta segura, ética y confiable.**

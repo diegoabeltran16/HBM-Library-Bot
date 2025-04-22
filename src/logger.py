@@ -79,7 +79,7 @@ logger.add(global_log_jsonl, serialize=True, level=LOG_LEVEL)
 # ─────────────────────────────────────────────────────────────
 # 🧩 Función principal de logging
 # ─────────────────────────────────────────────────────────────
-def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str = "", nivel: str = "INFO") -> str:
+def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str = "", nivel: str = "INFO", **extra) -> str:
     global LANG
     LANG = os.getenv("LANG", "es")
     idioma = MENSAJES.get(evento, {}).get(LANG, evento)
