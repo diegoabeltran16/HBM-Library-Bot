@@ -1,4 +1,4 @@
-# 📘 Logger – Dewey Pipeline
+# 📘 Logger – OpenPages-pipeline
 
 Este módulo permite registrar todos los eventos clave del procesamiento de PDFs de forma visual (emoji en consola) y persistente (archivos `.log` y `.jsonl`), con soporte multilenguaje y trazabilidad por ejecución.
 
@@ -16,7 +16,9 @@ Este módulo permite registrar todos los eventos clave del procesamiento de PDFs
 
 Todos los archivos se guardan automáticamente en la carpeta:
 
+```
 output/logs/
+```
 
 | Archivo | Descripción |
 | --- | --- |
@@ -40,8 +42,9 @@ Cada línea representa un evento del pipeline:
   "dewey": "600",
   "nivel": "INFO"
 }
-
 ```
+
+---
 
 ## 📦 Campos incluidos
 
@@ -61,13 +64,13 @@ Cada línea representa un evento del pipeline:
 
 | Evento | Emoji | Nivel sugerido | Contexto |
 | --- | --- | --- | --- |
-| `procesar` | 📘 | INFO | Inicio del procesamiento de un PDF |
-| `clasificado` | 📖 | INFO | Clasificación exitosa del documento |
-| `export_ok` | ✔️ | INFO | Exportación finalizada correctamente |
-| `warning_meta` | ⚠️ | WARNING | Metadatos faltantes o inválidos |
-| `warning_texto_corto` | ⚠️ | WARNING | El texto extraído es muy breve |
-| `error_parse` | ❌ | ERROR | Fallo al procesar o extraer texto |
-| `archivo_inaccesible` | ❌ | ERROR | No se puede abrir el archivo |
+| `procesar` | 📘  | INFO | Inicio del procesamiento de un PDF |
+| `clasificado` | 📖  | INFO | Clasificación exitosa del documento |
+| `export_ok` | ✔️  | INFO | Exportación finalizada correctamente |
+| `warning_meta` | ⚠️  | WARNING | Metadatos faltantes o inválidos |
+| `warning_texto_corto` | ⚠️  | WARNING | El texto extraído es muy breve |
+| `error_parse` | ❌   | ERROR | Fallo al procesar o extraer texto |
+| `archivo_inaccesible` | ❌   | ERROR | No se puede abrir el archivo |
 
 ---
 
@@ -83,9 +86,9 @@ Cada línea representa un evento del pipeline:
 
 ## 📌 Recomendaciones
 
-- Se recomienda revisar `run_*.jsonl` para análisis estructurado (Python, jq, etc.)
-- Los `.log` individuales por archivo permiten depurar errores aislados
-- Puedes incluir los logs en un dashboard externo si se requiere
+- Revisar `run_*.jsonl` para análisis estructurado (Python, jq, dashboards)
+- Usar los `.log` individuales para depurar errores aislados
+- Integrar los logs en herramientas externas si se requiere trazabilidad continua
 
 ---
 
@@ -96,3 +99,7 @@ El archivo `test_logger.py` incluye pruebas para:
 - Mensajes visuales esperados
 - Verificación de archivos `.jsonl`
 - Logs individuales por PDF
+
+---
+
+> `logger.py` es el narrador silencioso del pipeline. Te dice qué pasó, cuándo y cómo — sin ruido, con trazabilidad y respeto.

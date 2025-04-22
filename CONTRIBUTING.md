@@ -1,4 +1,4 @@
-# 🤝 Guía para Contribuir a Dewey Pipeline
+# 🤝 Guía para Contribuir a OpenPages-pipeline
 
 ¡Gracias por tu interés en colaborar!  
 Este proyecto busca construir herramientas abiertas para organizar y analizar conocimiento técnico y científico, y cada contribución suma.
@@ -9,7 +9,7 @@ Este proyecto busca construir herramientas abiertas para organizar y analizar co
 
 1. **Haz un fork** de este repositorio.
 2. Crea una nueva rama:  
-   `git checkout -b feat/tu-mejora`
+  `git checkout -b feat/tu-mejora`
 3. Realiza tus cambios localmente.
 4. Sigue el formato de commits (abajo).
 5. Abre un Pull Request claro y descriptivo. ¡Nos encantará revisarlo!
@@ -19,7 +19,7 @@ Este proyecto busca construir herramientas abiertas para organizar y analizar co
 ## ✅ Tipos de contribución bienvenidos
 
 | Tipo | Ejemplos |
-|------|----------|
+| --- | --- |
 | Documentación | Mejoras en el README, nuevos ejemplos, tutoriales |
 | Código | Nuevas funciones, refactor, optimizaciones |
 | Testeo | Tests unitarios, cobertura, casos edge |
@@ -42,14 +42,14 @@ Este proyecto busca construir herramientas abiertas para organizar y analizar co
 ## 🧩 Estructura de un mensaje de commit
 
 ```
-(C-#,md.#,bloq.#)-[tipo](estado): descripción breve
+[tipo](estado): descripción breve - (C-#,m.#,b.#)
 ```
 
 | **Sección** | **Significado** | **Ejemplo** |
 | --- | --- | --- |
 | `C-#` | Ciclo de desarrollo | `C-1` (Fase 1: MVP) |
-| `md.#` | Módulo trabajado (parser=1, cleaner=2, ...) | `md.3` = `classifier.py` |
-| `bloq.#` | Bloque funcional o acción puntual | `bloq.2` = `test` |
+| `m.#` | Módulo trabajado (parser=1, cleaner=2, ...) | `md.3` = `classifier.py` |
+| `b.#` | Bloque funcional o acción puntual | `bloq.2` = `test` |
 | `[tipo]` | Tipo de cambio (`feat`, `fix`, `refac`, `docs`, `test`) | `feat` = nueva función |
 | `(estado)` | Estado actual del cambio (`(p)` progreso, `(D)` done) | `(D)` = terminado |
 
@@ -70,16 +70,17 @@ Este proyecto busca construir herramientas abiertas para organizar y analizar co
 ## 🧠 Ejemplos de commits
 
 ```
-(C-1,md.1,bloq.1)-feat(D): función extract_text() inicial
+feat(D): función extract_text() inicial - (C-1,m.1,b.1)
 ```
+
+---
 
 ## 💬 ¿Dudas? ¿Ideas?
 
 Podés:
 
-- Abrir una [Issue](https://github.com/diegoabeltran16/dewey-pipeline/issues)
+- Abrir una [Issue](https://github.com/diegoabeltran16/OpenPages-pipeline/issues)
 - Escribirnos directamente desde tu fork con sugerencias
 - O dejar comentarios en tu PR
 
 Gracias por construir conocimiento abierto con nosotr@s 🌍✨
-

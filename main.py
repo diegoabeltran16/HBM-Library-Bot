@@ -1,7 +1,7 @@
 # main.py
 
 """
-Script principal del Dewey Pipeline 🧠📘
+Script principal del OpenPages-pipeline 🧠📘
 Procesa todos los archivos PDF dentro de /input/** y genera salidas en /output
 """
 
