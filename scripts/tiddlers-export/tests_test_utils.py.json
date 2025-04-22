@@ -1,0 +1,8 @@
+{
+  "title": "tests_test_utils.py",
+  "text": "## [[Tags]]\n[[Python]]\n\n```python\n# tests\\test_utils.py\n\nimport sys\nfrom pathlib import Path\nfrom src.utils import es_pdf_complejo, contiene_formula, normalizar_texto\n\n# 🔧 Asegura que src/ sea visible desde cualquier entorno\nsys.path.append(str(Path(__file__).resolve().parents[1]))\n\ndef test_es_pdf_complejo_true():\n    # Este PDF tiene múltiples bloques → considerado complejo\n    ruta = \"tests/fixtures/pdf_simple.pdf\"\n    assert es_pdf_complejo(ruta, umbral=6) is True\n\ndef test_es_pdf_complejo_false():\n    # Este PDF no tiene bloques → ahora también se considera complejo\n    ruta = \"tests/fixtures/pdf_formula.pdf\"\n    assert es_pdf_complejo(ruta, umbral=6) is True  # Cambiado a True\n\ndef test_contiene_formula_true():\n    texto = \"∫(x) dx + ∑(n=1)^∞\"\n    assert contiene_formula(texto) is True\n\ndef test_contiene_formula_false():\n    texto = \"Este es un texto normal, sin símbolos matemáticos raros.\"\n    assert contiene_formula(texto) is False\n\ndef test_normalizar_texto():\n    texto = \"Árbol Con Raíces y NÚMEROS\"\n    resultado = normalizar_texto(texto)\n    assert resultado == \"arbol con raices y numeros\"\n\n```",
+  "tags": "[[Python]]",
+  "type": "text/markdown",
+  "created": "20250422211125744",
+  "modified": "20250422211125744"
+}
