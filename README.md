@@ -51,8 +51,82 @@ Este proyecto se inspiró inicialmente en el sistema decimal creado por **Melvil
 ## ▶️ ¿Cómo usarlo?
 
 ### 1. Clonar el repositorio
+
 ```bash
 git clone https://github.com/diegoabeltran16/OpenPages-pipeline
 cd OpenPages-pipeline
+```
 
-a
+### 2. Crear entorno virtual
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate  # en Windows
+# o en Linux/macOS:
+# source .venv/bin/activate
+```
+
+### 3. Instalar dependencias
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Colocar PDFs dentro de /input/ (pueden estar en subcarpetas)
+
+```bash
+mkdir input/Book
+mv tu_archivo.pdf input/Book/
+```
+
+### 5. Ejecutar el pipeline
+
+```bash
+python main.py
+```
+
+---
+
+## 💡 Ejemplo de salida
+
+```plaintext
+📁 output/
+├── ensayo_100_filosofia_aprendizaje_automatico_diego_beltran.txt
+├── ensayo_100_filosofia_aprendizaje_automatico_diego_beltran.md
+├── ensayo_100_filosofia_aprendizaje_automatico_diego_beltran.jsonl
+```
+
+---
+
+## 🔍 Fase actual: MVP Offline
+
+| Módulo | Estado |
+| --- | --- |
+| Extracción | ✅ PyMuPDF + heurística de layout |
+| Limpieza | ✅ Markdown-ready, preservación semántica |
+| Clasificación | ✅ Dewey heurístico + título/autor |
+| Exportación | ✅ AI-ready multiformato |
+| Logger | ✅ Multilenguaje (es/en) |
+| Testing | ✅ Pytest + GitHub Actions CI |
+
+---
+
+## 📄 Licencia
+
+Este proyecto está licenciado bajo **Apache License 2.0**.  
+Podés usar, modificar y distribuir libremente, siempre que incluyas la atribución correspondiente.
+
+© 2024–2025 – *diegoabeltran_16*
+
+---
+
+## ✨ Contribuciones
+
+Si compartís esta visión de acceso libre al conocimiento, podés:
+
+- 💬 Abrir issues o sugerencias
+- 🧪 Agregar tests o módulos nuevos
+- 📚 Mejorar documentación o UX
+
+> Este pipeline también es tuyo. Hagámoslo crecer juntos.  
+> ✨ `openpages-pipeline` — para leer, pensar y compartir mejor.
