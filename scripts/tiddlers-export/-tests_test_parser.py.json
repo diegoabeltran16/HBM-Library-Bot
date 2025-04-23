@@ -1,0 +1,8 @@
+{
+  "title": "-tests_test_parser.py",
+  "text": "## [[Tags]]\nPython -tests_test_parser.py [[--- Codigo]] [[--🧪 tests/]]\n\n```python\n# tests/test_parser.py\nimport sys\nfrom pathlib import Path\nfrom src.parser import extract_text\n\n# 🔧 Asegura que src/ sea visible desde cualquier entorno\nsys.path.append(str(Path(__file__).resolve().parents[1]))\n\n\ndef test_extraccion_pdf_simple():\n    texto = extract_text(\"tests/fixtures/pdf_simple.pdf\")\n    assert len(texto) > 100  # Texto mínimo esperado\n\ndef test_descarta_formula():\n    texto = extract_text(\"tests/fixtures/pdf_formula.pdf\")\n    assert \"∫\" not in texto\n\n```",
+  "tags": "Python -tests_test_parser.py [[--- Codigo]] [[--🧪 tests/]]",
+  "type": "text/markdown",
+  "created": "20250423165831869",
+  "modified": "20250423165831869"
+}
