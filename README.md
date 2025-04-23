@@ -72,6 +72,58 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+---
+
+## 🔍 OCR Inteligente
+
+OpenPages puede extraer texto desde PDFs escaneados usando un sistema OCR modular y tolerante.
+
+### 🧰 Dependencias necesarias
+
+**Tesseract OCR**
+
+- Instala desde: [UB Mannheim Build](https://github.com/UB-Mannheim/tesseract/wiki)
+- Ruta esperada: `C:/Users/<usuario>/AppData/Local/Programs/Tesseract-OCR`
+
+**Poppler (opcional para alta calidad)**
+
+- Descarga desde: [Poppler para Windows](https://github.com/oschwartz10612/poppler-windows/releases)
+- Ruta sugerida: `C:/Users/<usuario>/AppData/Local/Programs/Poppler/Library/bin`
+
+_No es necesario agregarlos al PATH. OpenPages los detecta automáticamente._
+
+### 🧪 Probar OCR
+
+Coloca un PDF escaneado en `tests/fixtures/ocr_simple.pdf` y ejecuta:
+
+```bash
+pytest tests/test_ocr.py
+```
+
+Verás algo como:
+
+```
+[OCR] Página 1 procesada
+```
+
+O bien:
+
+```
+[OCR Lite] Página 1 procesada
+```
+
+### 🌐 Idiomas y ecuaciones
+
+Puedes especificar idioma al usar:
+
+```python
+ocr_completo_inteligente("archivo.pdf", lang="spa")
+```
+
+Para ecuaciones, usa `lang="equ"` (requiere modelo instalado en `tessdata`).
+
+---
+
 ### 4. Colocar PDFs dentro de /input/ (pueden estar en subcarpetas)
 
 ```bash

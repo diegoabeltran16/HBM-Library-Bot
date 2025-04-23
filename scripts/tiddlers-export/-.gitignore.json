@@ -1,8 +1,0 @@
-{
-  "title": "-.gitignore",
-  "text": "## [[Tags]]\n[[--- 🧬 Por Clasificar]]\n\n```gitignore\n# ────────────────\n# 🐍 Python cache & compiled files\n# ────────────────\n__pycache__/\n*.pyc\n*.pyo\n*.pyd\n\n# ────────────────\n# 🔐 Entornos virtuales y variables sensibles\n# ────────────────\n.venv/\nvenv/\n.env\n.env.*\nconfigs/\nconfigs/.env\n\n# ────────────────\n# 🖼️ Multimedia y documentación interna\n# ────────────────\nmedia/\nproject_details/\n\n# ────────────────\n# 🧠 Archivos específicos de IDE y sistema\n# ────────────────\n.vscode/\n.DS_Store\nThumbs.db\n\n# Output general\n/output/*\n!output/.gitkeep\n\n# Logs y ejecución\noutput/logs/*\n!output/logs/.gitkeep\n*.log\n*.jsonl\n\necho -e \"\\n# Output y logs\\n/output/\\n!output/.gitkeep\\noutput/logs/*\\n!output/logs/.gitkeep\\n*.log\\n*.jsonl\" >> .gitignore\n\n# scripts\n.hashes.json\n\n# Estructura\nestructura.txt\n\n# Imports\nscripts/tiddlers-import\n\n\n```",
-  "tags": "[[--- 🧬 Por Clasificar]]",
-  "type": "text/markdown",
-  "created": "20250423165831745",
-  "modified": "20250423165831745"
-}

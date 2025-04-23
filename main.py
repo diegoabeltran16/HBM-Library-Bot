@@ -7,7 +7,7 @@ import os
 import argparse
 from pathlib import Path
 
-from src.parser import extract_text
+from src.parser import extract_text  # ✅ Ahora incluye heurística + OCR
 from src.cleaner import limpiar_texto_completo
 from src.enhancer import enriquecer_texto
 from src.classifier import clasificar_documento
@@ -43,9 +43,12 @@ def main(debug=False):
 
         try:
             print(f"\n📘 Procesando: {ruta}")
-            # 1 Extraer texto
+            # 1 Extraer texto (usa OCR si es necesario automáticamente)
             texto_crudo = extract_text(ruta)
             log_evento("procesar", archivo=ruta)
+
+            if any(tag in texto_crudo for tag in ["[OCR]", "[OCR Lite]"]):
+                print("👁️ Se usó OCR para extraer el contenido (modo inteligente)")
 
             # 2️ Limpiar texto
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)

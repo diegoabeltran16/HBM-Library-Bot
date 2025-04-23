@@ -1,8 +1,0 @@
-{
-  "title": "tests_test_exporter.py",
-  "text": "## [[Tags]]\n[[Python]]\n\n```python\n# tests/test_exporter.py\nimport sys\nfrom pathlib import Path\nfrom pathlib import Path\nfrom src.exporter import exportar_archivos, limpiar_nombre\n\n# 🔧 Asegura que src/ sea visible desde cualquier entorno\nsys.path.append(str(Path(__file__).resolve().parents[1]))\n\ndef test_exportar_archivos_crea_todos_los_formatos():\n    tipo = \"Essay\"\n    nombre = \"Prueba de Exportación\"\n    texto = \"Párrafo 1.\\n\\nPárrafo 2.\"\n    categoria = \"Philosophy and Psychology\"\n    dewey = \"100\"\n    autores = \"Jane Doe\"\n\n    # Construir nombre_base con la misma lógica del exporter\n    nombre_base = \"_\".join([\n        limpiar_nombre(tipo),\n        dewey,\n        limpiar_nombre(categoria),\n        limpiar_nombre(nombre),\n        limpiar_nombre(autores)\n    ])\n\n    output_dir = Path(\"output\")\n    extensiones = [\".txt\", \".md\", \".jsonl\"]\n\n    exportar_archivos(tipo, nombre, texto, categoria, dewey, autores)\n\n    for ext in extensiones:\n        path = output_dir / f\"{nombre_base}{ext}\"\n        assert path.exists(), f\"Falta el archivo: {path}\"\n        assert path.stat().st_size > 0, f\"Archivo vacío: {path}\"\n        path.unlink()  # Limpieza\n\n```",
-  "tags": "[[Python]]",
-  "type": "text/markdown",
-  "created": "20250422211125738",
-  "modified": "20250422211125738"
-}

@@ -1,3 +1,4 @@
+""
 """
 📘 enhancer.py – Reparación y mejora de texto dañado extraído de PDF
 
@@ -13,12 +14,14 @@
 - reparar_encoding(): "Ã³ptima" → "óptima" (usando ftfy)
 - normalizar_unicode(): é → é (forma precompuesta)
 - marcar_fragmentos_dudosos(): etiqueta líneas ilegibles
+- reparar_ocr_simbolos(): “ﬂuid” → “fluid”, Ɵ → ti, etc.  ← ¡Nuevo!
 - enriquecer_texto(): orquesta todas las anteriores
 
 ⚙️ Extras:
 - acumulación de estadísticas
 - control de flujo flexible (pasos)
 - debug opcional
+- 🧠 Incluye tolerancia a errores comunes de OCR
 """
 
 import re
@@ -36,7 +39,6 @@ try:
 except ImportError:
     log_evento = lambda *args, **kwargs: None
 
-
 # ────────────────────────────────────────────────
 # 🔢 Acumulador de estadísticas
 # ────────────────────────────────────────────────
@@ -47,7 +49,6 @@ def acumular_stats(global_stats: dict, nuevos_stats: dict) -> dict:
         if isinstance(valor, (int, float)):
             global_stats[clave] = global_stats.get(clave, 0) + valor
     return global_stats
-
 
 # ────────────────────────────────────────────────
 # 🔧 Funciones de reparación específicas
@@ -74,7 +75,6 @@ def reemplazar_cid_ascii(texto: str) -> tuple[str, dict]:
     texto_corregido = patron.sub(convertir, texto)
     return texto_corregido, {"cid_ascii_convertidos": reemplazos}
 
-
 def reparar_cid(texto: str) -> tuple[str, dict]:
     """
     Elimina residuos de "cid:123" aún presentes.
@@ -83,7 +83,6 @@ def reparar_cid(texto: str) -> tuple[str, dict]:
     encontrados = re.findall(patron, texto)
     texto_corregido = re.sub(patron, "", texto)
     return texto_corregido, {"cid_reparados": len(encontrados)}
-
 
 def reparar_palabras_partidas(texto: str) -> tuple[str, dict]:
     """
@@ -94,7 +93,6 @@ def reparar_palabras_partidas(texto: str) -> tuple[str, dict]:
     matches = re.findall(patron, texto)
     texto_reparado = re.sub(patron, r"\1\2", texto)
     return texto_reparado, {"palabras_reparadas": len(matches)}
-
 
 def reparar_encoding(texto: str, forzar: bool = False) -> tuple[str, dict]:
     """
@@ -109,7 +107,6 @@ def reparar_encoding(texto: str, forzar: bool = False) -> tuple[str, dict]:
     except Exception as e:
         return texto, {"encoding_reparado": 0, "error_encoding": str(e)}
 
-
 def normalizar_unicode(texto: str) -> tuple[str, dict]:
     """
     Convierte secuencias Unicode a formas precompuestas.
@@ -117,7 +114,6 @@ def normalizar_unicode(texto: str) -> tuple[str, dict]:
     """
     normalizado = unicodedata.normalize("NFKC", texto)
     return normalizado, {"unicode_normalizado": int(normalizado != texto)}
-
 
 def marcar_fragmentos_dudosos(texto: str) -> tuple[str, dict]:
     """
@@ -127,6 +123,32 @@ def marcar_fragmentos_dudosos(texto: str) -> tuple[str, dict]:
     if not re.search(r"[a-zA-ZáéíóúñÁÉÍÓÚÑ]", texto):
         return f"[DUDOSO] {texto}", {"marcas_insertadas": 1}
     return texto, {"marcas_insertadas": 0}
+
+def reparar_ocr_simbolos(texto: str) -> tuple[str, dict]:
+    """
+    Reemplaza errores comunes de OCR relacionados con símbolos tipográficos y letras mal interpretadas.
+    Ejemplos:
+    - "ﬁ" → "fi"
+    - "ﬂ" → "fl"
+    - "Ɵ" → "O" (Theta mal interpretada como letra O)
+    
+    📚 Nota: Este tipo de errores suele ser más común en OCR de documentos antiguos o fuentes tipográficas especiales.
+    """
+    mapa = {
+        "ﬁ": "fi",
+        "ﬂ": "fl",
+        "Ɵ": "O",  # theta mayúscula mal interpretada
+        "ƞ": "n",  # por si aparece
+    }
+
+    reemplazos = 0
+    for simbolo, reemplazo in mapa.items():
+        if simbolo in texto:
+            cantidad = texto.count(simbolo)
+            texto = texto.replace(simbolo, reemplazo)
+            reemplazos += cantidad
+
+    return texto, {"simbolos_ocr_corregidos": reemplazos}
 
 
 # ────────────────────────────────────────────────
@@ -147,6 +169,9 @@ def enriquecer_texto(
     - archivo: str → Ruta opcional para trazabilidad
     - pasos: list[func] → Orden y selección de funciones a aplicar
     - debug: bool → Muestra comparación antes/después (útil para desarrollo)
+
+    🧠 Nota: También se aplica sobre salidas OCR (de ocr_completo_inteligente)
+    ¿Deberíamos en el futuro detectar errores como '1ntroduccion'? (OCR vs typo)
     """
 
     if pasos is None:
@@ -156,6 +181,7 @@ def enriquecer_texto(
             normalizar_unicode,
             reparar_palabras_partidas,
             reparar_cid,
+            reparar_ocr_simbolos,  # ← activado por defecto para OCR inteligente
             marcar_fragmentos_dudosos,
         ]
 
