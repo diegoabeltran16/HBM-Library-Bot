@@ -1,8 +1,0 @@
-{
-  "title": "-requirements.txt",
-  "text": "## [[Tags]]\n[[--- Codigo]] [[--📘 Documentacion]] -requirements.txt\n\n```txt\npymupdf==1.25.5\npdfplumber\npytest\nunidecode\nloguru>=0.7.2\n\n```",
-  "tags": "[[--- Codigo]] [[--📘 Documentacion]] -requirements.txt",
-  "type": "text/markdown",
-  "created": "20250423165831801",
-  "modified": "20250423165831801"
-}
