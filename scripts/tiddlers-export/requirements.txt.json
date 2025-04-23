@@ -1,0 +1,8 @@
+{
+  "title": "requirements.txt",
+  "text": "## [[Tags]]\n\n\n```txt\npymupdf==1.25.5\npdfplumber\npytest\nunidecode\nloguru>=0.7.2\n\n```",
+  "tags": "",
+  "type": "text/markdown",
+  "created": "20250423150121203",
+  "modified": "20250423150121203"
+}

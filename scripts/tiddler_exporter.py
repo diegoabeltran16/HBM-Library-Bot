@@ -1,16 +1,31 @@
 """
-📦 Tiddler Exporter – scripts/tiddler_exporter.py
+📦 Script: tiddler_exporter.py
+📍 Ubicación: scripts/tiddler_exporter.py
 
-Este módulo recorre los archivos fuente del proyecto, detecta cambios mediante hashes,
-extrae etiquetas (tags) automáticamente en base a la ruta y extensión, y exporta un archivo
-por cada entrada como tiddler individual en formato JSON, listo para importar en TiddlyWiki.
+🧠 Función:
+Este script recorre todos los archivos fuente del proyecto, detecta si su contenido ha cambiado,
+y si es así, genera un archivo `.json` en formato TiddlyWiki listo para ser importado.
 
-🔒 100% en Python, sin dependencias externas. Ideal para documentación viva, visual y offline.
+🔖 Cada archivo se convierte en un "tiddler", con:
+  - Nombre prefijado con `-` (ej: -src_logger.py)
+  - Tags semánticos desde `OpenPages.json` vía `tag_mapper.py`
+  - Bloque markdown con código resaltado según lenguaje
+
+🎯 Compatible con TiddlyWiki, offline, AI-ready y 100% Python puro.
+
+✅ Cómo ejecutarlo:
+
+    # Exporta solo si hay cambios
+    python scripts/tiddler_exporter.py
+
+    # Modo simulación (muestra qué archivos cambiarían)
+    python scripts/tiddler_exporter.py --dry-run
 """
 
 import os
 import json
 import hashlib
+import tag_mapper
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
@@ -19,13 +34,18 @@ from typing import List
 # ⚙️ CONFIGURACIÓN GENERAL
 # ==========================
 
-ROOT_DIR = Path(__file__).resolve().parents[1]  # raíz del proyecto
+ROOT_DIR = Path(__file__).resolve().parents[1]  # raíz del repo
 SCRIPT_DIR = Path(__file__).parent
 OUTPUT_DIR = SCRIPT_DIR / "tiddlers-export"
 HASH_FILE = SCRIPT_DIR / ".hashes.json"
 
-VALID_EXTENSIONS = ['.py', '.md', '.json', '.sh', '.html', '.css','.yml']
-IGNORE_DIRS = ['__pycache__', 'venv', '.venv', 'dist', 'node_modules', 'output', 'input', '.pytest_cache', 'configs', 'media', 'project_details', 'tiddlers-export'   ]
+VALID_EXTENSIONS = ['.py', '.md', '.json', '.sh', '.html', '.css', '.yml', '.txt']
+ALLOWED_FILENAMES = ['.gitignore']  # Archivos sin extensión pero importantes
+
+IGNORE_DIRS = [
+    '__pycache__', 'venv', '.venv', 'dist', 'node_modules', 'output', 'input',
+    '.pytest_cache', 'configs', 'media', 'project_details', 'tiddlers-export'
+]
 
 LANGUAGE_MAP = {
     '.py': 'python',
@@ -34,58 +54,51 @@ LANGUAGE_MAP = {
     '.sh': 'bash',
     '.yml': 'bash',
     '.html': 'html',
+    '.txt': 'txt',
     '.css': 'css'
 }
 
-TAG_MAP = [
-    {"dir": "src", "tag": "[[--- Codigo]]"},
-    {"dir": "tests", "tag": "[[--- Test]]"},
-    {"dir": "scripts", "tag": "[[--- Automatizacion]]"},
-    {"ext": ".md", "tag": "[[--- Documentacion]]"},
-    {"ext": ".py", "tag": "[[Python]]"},
-    {"ext": ".json", "tag": "[[JSON]]"},
-    {"ext": ".sh", "tag": "[[Shell]]"},
-]
+SPECIAL_LANGUAGES = {
+    '.gitignore': 'gitignore'
+}
 
 # ==============================
 # 🔎 FUNCIONES AUXILIARES
 # ==============================
 
 def get_all_files(directory: Path) -> List[Path]:
-    """Recorre recursivamente el proyecto y devuelve los archivos válidos."""
+    """Recorre el proyecto y devuelve archivos válidos para exportar."""
     all_files = []
     for root, dirs, files in os.walk(directory):
-        # Ignorar carpetas no deseadas
         dirs[:] = [d for d in dirs if d not in IGNORE_DIRS]
         for file in files:
             ext = Path(file).suffix
-            if ext in VALID_EXTENSIONS:
+            if ext in VALID_EXTENSIONS or file in ALLOWED_FILENAMES:
                 all_files.append(Path(root) / file)
     return all_files
 
 def get_hash(content: str) -> str:
+    """Genera hash SHA-1 para detectar cambios en el archivo."""
     return hashlib.sha1(content.encode('utf-8')).hexdigest()
 
-def detect_tags(file_path: Path) -> List[str]:
-    """Asigna tags automáticamente según carpeta o extensión."""
-    tags = []
-    rel_path = str(file_path.relative_to(ROOT_DIR))
-    for rule in TAG_MAP:
-        if rule.get("dir") and f"/{rule['dir']}/" in rel_path:
-            tags.append(rule["tag"])
-        if rule.get("ext") and rel_path.endswith(rule["ext"]):
-            tags.append(rule["tag"])
-    return list(set(tags))  # evitar duplicados
-
 def safe_title(path: Path) -> str:
-    """Convierte la ruta del archivo en un título válido para TiddlyWiki."""
-    return str(path.relative_to(ROOT_DIR)).replace(os.sep, '_')
+    """Convierte una ruta en título de tiddler válido, prefijado con '-'."""
+    return '-' + str(path.relative_to(ROOT_DIR)).replace(os.sep, '_')
+
+def detect_language(file_path: Path) -> str:
+    """Detecta el lenguaje para resaltar el bloque de código en markdown."""
+    if file_path.name in SPECIAL_LANGUAGES:
+        return SPECIAL_LANGUAGES[file_path.name]
+    ext = file_path.suffix
+    return LANGUAGE_MAP.get(ext, 'text')
 
 # ==============================
 # 🚀 EXPORTADOR PRINCIPAL
 # ==============================
 
 def export_tiddlers(dry_run=False):
+    """Recorre los archivos, detecta cambios y genera tiddlers si es necesario."""
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     if HASH_FILE.exists():
         with open(HASH_FILE, 'r', encoding='utf-8') as f:
@@ -98,17 +111,22 @@ def export_tiddlers(dry_run=False):
 
     for file_path in get_all_files(ROOT_DIR):
         rel_path = str(file_path.relative_to(ROOT_DIR))
-        ext = file_path.suffix
-        lang = LANGUAGE_MAP.get(ext, 'text')
-        content = file_path.read_text(encoding='utf-8')
+        lang = detect_language(file_path)
+
+        try:
+            content = file_path.read_text(encoding='utf-8')
+        except Exception as e:
+            print(f"⚠️ Error leyendo {rel_path}: {e}")
+            continue
+
         hash_now = get_hash(content)
         new_hashes[rel_path] = hash_now
 
         if old_hashes.get(rel_path) == hash_now:
             continue  # sin cambios
 
-        tags = detect_tags(file_path)
         title = safe_title(file_path)
+        tags = tag_mapper.get_tags_for_file(file_path)  # 🧬 Tags desde OpenPages.json
 
         # 🧠 Contenido markdown con tags visuales arriba
         text_block = f"## [[Tags]]\n{' '.join(tags)}\n\n```{lang}\n{content}\n```"
@@ -144,7 +162,7 @@ def export_tiddlers(dry_run=False):
         print("  🔁 Sin cambios detectados.")
 
 # ==============================
-# 🧪 ENTRADA DIRECTA (CLI SIMPLE)
+# 🧪 CLI: Entrada directa
 # ==============================
 
 if __name__ == "__main__":
