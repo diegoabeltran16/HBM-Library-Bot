@@ -46,3 +46,7 @@ echo -e "\n# Output y logs\n/output/\n!output/.gitkeep\noutput/logs/*\n!output/l
 
 # Estructura
 estructura.txt
+
+# Imports
+scripts/tiddlers-import
+
