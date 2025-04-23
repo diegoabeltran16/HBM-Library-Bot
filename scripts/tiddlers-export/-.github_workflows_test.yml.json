@@ -1,0 +1,8 @@
+{
+  "title": "-.github_workflows_test.yml",
+  "text": "## [[Tags]]\n-.github_workflows_test.yml [[--⚙️ Automatización]] [[--- Codigo]]\n\n```bash\n# .github/workflows/test.yml\nname: 🧪 Run Project Tests\n\non:\n  push:\n    branches: [main]\n  pull_request:\n    branches: [main]\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n\n    steps:\n    - name: 🧾 Checkout repository\n      uses: actions/checkout@v3\n\n    - name: 🐍 Set up Python 3.12\n      uses: actions/setup-python@v4\n      with:\n        python-version: 3.12\n\n    - name: 📦 Install dependencies\n      run: |\n        python -m pip install --upgrade pip\n        pip install -r requirements.txt\n\n    - name: 🧪 Run tests with pytest\n      run: |\n        python -m pytest -v\n\n```",
+  "tags": "-.github_workflows_test.yml [[--⚙️ Automatización]] [[--- Codigo]]",
+  "type": "text/markdown",
+  "created": "20250423165831809",
+  "modified": "20250423165831811"
+}
