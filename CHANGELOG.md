@@ -30,7 +30,7 @@
 
 ---
 
-## 📝 Changelog V3.R2.C1
+## 📝 Changelog V3.R2.C2
 
 ### ✨ Nuevas funciones:
 
