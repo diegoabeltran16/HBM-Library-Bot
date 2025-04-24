@@ -173,3 +173,35 @@
 
 ---
 
+## 📝 Changelog V3.R2.C5
+
+### ✨ Nuevas funciones:
+
+🧠 Gen `main.py`
+
+- `main()`: Coordinador del pipeline con capacidad de validación semántica
+  
+- Integración de `validar_documento()` dentro del flujo, sin interrupciones
+  
+- Logs de procesamiento por documento, incluso con errores semánticos
+  
+
+### 🧪 Cobertura de tests:
+
+- ✅ Flujo ejecutado completo con logs generados
+  
+- ✅ Comprobación manual de logs `.jsonl` y fallback no bloqueante
+  
+
+### 🔄 Mutaciones en módulos relacionados:
+
+- `validator.py`: Invocado condicionalmente, sin alteración directa
+  
+- `logger.py`: Reutilización de `log_evento()` para trazabilidad
+  
+
+### 📈 Derivadas observadas
+
+- **∆r = +2.0** → Expansión del flujo principal con validación integrada
+  
+- **∆c = +3.0** → Madurez funcional y trazabilidad alcanzada
