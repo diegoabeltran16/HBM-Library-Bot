@@ -1,61 +1,61 @@
-# tests/test_validator.py
-
 import pytest
 import sys
 from pathlib import Path
 
-# 🔧 Asegura que src/ sea visible desde cualquier entorno
+# Asegura visibilidad del módulo src/
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.validator import (
-    validar_texto_no_vacio,
-    validar_longitud,
-    validar_titulo,
-    validar_autor,
+    validar_resumen,
+    validar_secciones,
+    validar_citas_referencias,
     validar_documento
 )
 
 # ─────────────────────────────────────────────────────────────
-# Test individuales
+# Tests unitarios específicos
 # ─────────────────────────────────────────────────────────────
 
-def test_validar_texto_no_vacio():
-    assert validar_texto_no_vacio("   ")[0] is False
-    assert validar_texto_no_vacio("Contenido útil")[0] is True
+def test_validar_resumen_faltante():
+    texto = "Este documento no tiene resumen inicial explícito."
+    errores = validar_resumen(texto)
+    assert any("Resumen no encontrado" in e for e in errores)
 
-def test_validar_longitud():
-    texto_corto = "Esto es un texto corto."
-    texto_largo = " ".join(["palabra"] * 200)
-    assert validar_longitud(texto_corto)[0] is False
-    assert validar_longitud(texto_largo)[0] is True
+def test_validar_secciones_faltantes():
+    texto = "Este texto solo tiene una sección llamada Resultados."
+    errores = validar_secciones(texto)
+    assert any("Secciones faltantes" in e for e in errores)
 
-def test_validar_titulo():
-    assert validar_titulo("untitled")[0] is False
-    assert validar_titulo("")[0] is False
-    assert validar_titulo("Mi gran investigación sobre redes")[0] is True
+def test_validar_citas_referencias_ausentes():
+    texto = "Este texto no contiene ningún patrón válido de referencia académica."
+    errores = validar_citas_referencias(texto)
+    assert any("citas" in e.lower() for e in errores)
 
-def test_validar_autor():
-    assert validar_autor("anonymous")[0] is False
-    assert validar_autor("-")[0] is False
-    assert validar_autor("Jane Doe")[0] is True
 
 # ─────────────────────────────────────────────────────────────
-# Test de la función principal
+# Test integrador: documento con múltiples errores
 # ─────────────────────────────────────────────────────────────
 
-def test_validar_documento_valido():
-    texto = " ".join(["contenido"] * 200)
-    titulo = "Un estudio profundo sobre grafos semánticos"
-    autor = "Dr. Ada Lovelace"
-    es_valido, info = validar_documento(texto, titulo, autor)
-    assert es_valido is True
-    assert info == {}
+def test_validar_documento_con_errores(tmp_path):
+    texto = "texto muy corto sin estructura ni resumen ni referencias"
+    ruta_pdf = tmp_path / "doc_fallido.pdf"
+    ruta_pdf.write_text("contenido simulado")
 
-def test_validar_documento_invalido():
-    texto = "    "  # vacío
-    titulo = "untitled"
-    autor = ""
-    es_valido, info = validar_documento(texto, titulo, autor)
-    assert es_valido is False
-    assert "texto vacío" in " ".join(info.get("razones", []))
-    assert any("autor" in r for r in info.get("razones", []))
+    errores = validar_documento(texto, str(ruta_pdf))
+    assert isinstance(errores, list)
+    assert len(errores) >= 3
+    assert any("Resumen" in e for e in errores)
+    assert any("Secciones" in e for e in errores)
+    assert any("citas" in e.lower() for e in errores)
+
+def test_documento_real_the_origins():
+    import fitz  # PyMuPDF
+    ruta = "tests/fixtures/The Origins of music.pdf"
+    doc = fitz.open(ruta)
+    texto = "\n".join([page.get_text() for page in doc if page.get_text()])
+
+    errores = validar_documento(texto, ruta)
+    print("Errores detectados:", errores)
+    assert isinstance(errores, list)
+    assert len(errores) <= 2  # toleramos 0-2 errores leves (ej: resumen muy largo o cita no reconocida)
+

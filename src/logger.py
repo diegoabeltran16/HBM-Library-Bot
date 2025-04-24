@@ -1,20 +1,18 @@
-# src/logger.py
-
 """
-📘 Logger persistente para Dewey Pipeline
-Registra eventos con formato estructurado (.log y .jsonl) y visual (emoji).
-Compatible con trazabilidad por corrida e integración futura.
+📘 logger.py – Registro estructurado y visual para OpenPages Pipeline
 
-🧱 Estructura del JSON generado (1 línea por evento):
-{
-    "timestamp": "2025-04-10T15:42:21.543Z",
-    "ejecucion": "c78fbccbeed045b5919e8a7e79dd4d73",
-    "evento": "clasificado",
-    "archivo": "input/Libro.pdf",
-    "categoria": "Tecnología",
-    "dewey": "600",
-    "nivel": "INFO"
-}
+Este módulo cumple dos funciones clave:
+1. Registro multilingüe con salida visual (terminal) para trazabilidad en tiempo real.
+2. Logging estructurado en formato JSONL para trazabilidad semántica y análisis posterior.
+
+Incluye dos tipos de eventos:
+- Eventos generales (clasificación, errores de procesamiento, etc.)
+- Eventos de validación semántica (estructura, resumen, citas...)
+
+🧬 En la Vuelta #3 se implementa log_validacion(), que permite:
+- Registrar eventos ligados a zonas del documento (abstract, body, references)
+- Clasificar errores por código (E4001–E4999)
+- Escribir logs por ejecución y por hash de documento
 """
 
 import os
@@ -25,7 +23,7 @@ from pathlib import Path
 from loguru import logger
 
 # ─────────────────────────────────────────────────────────────
-# 🌍 Diccionario multilenguaje con emojis
+# 🌍 Diccionario multilenguaje con emojis amigables
 # ─────────────────────────────────────────────────────────────
 MENSAJES = {
     "procesar": {
@@ -59,7 +57,7 @@ MENSAJES = {
 }
 
 # ─────────────────────────────────────────────────────────────
-# ⚙️ Configuración global y persistencia
+# ⚙️ Configuración global para logs
 # ─────────────────────────────────────────────────────────────
 LANG = os.getenv("LANG", "es")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -77,18 +75,17 @@ logger.add(global_log_txt, level=LOG_LEVEL, format="{time} | {level} | {message}
 logger.add(global_log_jsonl, serialize=True, level=LOG_LEVEL)
 
 # ─────────────────────────────────────────────────────────────
-# 🧩 Función principal de logging
+# 🧩 log_evento(): para eventos generales (pipeline, errores)
 # ─────────────────────────────────────────────────────────────
 def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str = "", nivel: str = "INFO", **extra) -> str:
+    """
+    Registra un evento general en consola, archivo .log y .jsonl
+    """
     global LANG
     LANG = os.getenv("LANG", "es")
     idioma = MENSAJES.get(evento, {}).get(LANG, evento)
     mensaje = idioma.format(archivo=archivo, categoria=categoria, dewey=dewey)
-    
-    # Visual amigable (terminal)
-    print(mensaje)
 
-    # Entrada estructurada
     log_data = {
         "timestamp": datetime.now().isoformat(),
         "ejecucion": EXECUTION_ID,
@@ -99,18 +96,21 @@ def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str =
         "nivel": nivel.upper(),
     }
 
-    # Log .log plano
+    # Visual amigable
+    print(mensaje)
+
+    # Log plano
     try:
         logger.log(nivel.upper(), mensaje)
     except Exception as e:
-        print(f"❌ Error escribiendo en log plano: {e}")
+        print(f"❌ Error en log plano: {e}")
 
-    # Log .jsonl
+    # Log estructurado
     try:
         with open(global_log_jsonl, "a", encoding="utf-8") as f:
             f.write(json.dumps(log_data) + "\n")
     except Exception as e:
-        print(f"❌ Error escribiendo en log JSONL: {e}")
+        print(f"❌ Error escribiendo log estructurado: {e}")
 
     # Log individual por archivo
     if archivo:
@@ -122,3 +122,55 @@ def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str =
             print(f"❌ Error escribiendo log individual: {e}")
 
     return mensaje
+
+# ─────────────────────────────────────────────────────────────
+# 🧬 log_validacion(): eventos semánticos AI-ready
+# ─────────────────────────────────────────────────────────────
+def log_validacion(evento: str, error_code: str, severity: str, zone: str, archivo: str, razones: list, hash: str = "", **kwargs):
+    """
+    Registra un evento de validación semántica en formato AI-ready:
+    - Incluye código, severidad, zona, hash, y razones
+    - Se escribe tanto en el log global como en un log exclusivo por documento (basado en hash)
+
+    Args:
+        evento: tipo de evento (debe ser 'validation_error')
+        error_code: código semántico (ej: E4002)
+        severity: INFO / WARNING / ERROR / CRITICAL
+        zone: sección del documento afectada
+        archivo: ruta al PDF original
+        razones: lista con descripciones del problema
+        hash: hash_md5 del documento (opcional pero recomendado)
+    """
+    assert evento == "validation_error", "Evento inválido para log_validacion"
+    assert isinstance(razones, list) and razones, "Razones debe ser una lista no vacía"
+
+    log_data = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "ejecucion": EXECUTION_ID,
+        "evento": evento,
+        "error_code": error_code,
+        "severity": severity.upper(),
+        "zone": zone,
+        "archivo": archivo,
+        "razones": razones,
+        "hash_doc": hash
+    }
+
+    # Registro principal en .jsonl global
+    try:
+        with open(global_log_jsonl, "a", encoding="utf-8") as f:
+            f.write(json.dumps(log_data) + "\n")
+    except Exception as e:
+        print(f"❌ Error escribiendo validación global: {e}")
+
+    # Registro alternativo por documento (hash)
+    if hash:
+        try:
+            archivo_hash = LOGS_DIR / f"{hash}.jsonl"
+            with open(archivo_hash, "a", encoding="utf-8") as f:
+                f.write(json.dumps(log_data) + "\n")
+        except Exception as e:
+            print(f"❌ Error escribiendo log por hash: {e}")
+
+    # Mensaje en consola
+    print(f"[{severity.upper()}] {zone} → {razones[0]}")

@@ -1,15 +1,17 @@
 # tests/test_logger.py
 
-import os
-import json
-import pytest
 import sys
 from pathlib import Path
-from pathlib import Path
-from src.logger import log_evento
 
 # 🔧 Asegura que src/ sea visible desde cualquier entorno
 sys.path.append(str(Path(__file__).resolve().parents[1]))
+
+import os
+import json
+import pytest
+
+from src.logger import log_evento, log_validacion  # <- ya podés importar ambos
+
 
 # 🌍 Forzar idioma en pruebas
 os.environ["LANG"] = "es"
@@ -66,3 +68,32 @@ def test_log_individual_por_pdf(ruta_dummy):
     with open(archivo_log, encoding="utf-8") as f:
         contenido = f.read()
         assert "📘" in contenido or "PROCESAR" in contenido.upper()
+
+def test_log_validacion_crea_log_por_hash(tmp_path):
+    # Simula un PDF hash ficticio
+    hash_doc = "abc123hash"
+
+    ruta = tmp_path / "doc_ejemplo.pdf"
+    ruta.write_text("Contenido del documento para test")
+
+    # Registro semántico
+    log_validacion(
+        evento="validation_error",
+        error_code="E4002",
+        severity="WARNING",
+        zone="abstract",
+        archivo=str(ruta),
+        razones=["Resumen fuera de rango: 87 palabras."],
+        hash=hash_doc
+    )
+
+    # Verifica log por hash
+    log_hash_file = Path("output/logs") / f"{hash_doc}.jsonl"
+    assert log_hash_file.exists(), "No se creó el log por hash"
+
+    with open(log_hash_file, encoding="utf-8") as f:
+        data = json.loads(f.readline())
+        assert data["error_code"] == "E4002"
+        assert data["zone"] == "abstract"
+        assert data["severity"] == "WARNING"
+        assert "Resumen fuera de rango" in data["razones"][0]
