@@ -34,7 +34,7 @@
 
 ### ✨ Nuevas funciones:
 
-#### 🧠 Gen `validator.py`
+🧠 Gen `validator.py`
 
 - `validar_documento()`: Coordinador tolerante con logging estructurado
   
@@ -43,7 +43,7 @@
 - `mapear_codigo()`, `clasificar_severidad()`, `detectar_zona()`: Trazabilidad ética
   
 
-#### 🧬 Gen `enhancer.py`
+🧬 Gen `enhancer.py`
 
 - `reparar_encoding()`, `reparar_cid()`, `reparar_ocr_simbolos()`, `normalizar_unicode()`
   
@@ -52,15 +52,12 @@
 - `enriquecer_texto()`: Interfaz sencilla para limpieza semántica
   
 
-#### 🧩 Gen `enhancer_utils.py`
+🧩 Gen `enhancer_utils.py`
 
 - `acumular_stats()`: Acumulación de métricas por función
   
 - `aplicar_diccionario()`: Diccionario externo para OCR (`ocr_dict.json`)
   
-
----
-
 ### 🧬 Nuevos archivos/tipos de exportación:
 
 - `.jsonl` de errores semánticos por hash, con `zone`, `error_code`, `severity`, `razones`
@@ -69,8 +66,6 @@
   
 - `.jsonl` por párrafos listos para AI (`exportar_archivos()`)
   
-
----
 
 ### 🧪 Cobertura de tests:
 
@@ -81,8 +76,6 @@
 - ✅ Test de impacto adaptativo (cuenta cuántas correcciones por paso)
   
 
----
-
 ### 🔄 Mutaciones en módulos relacionados:
 
 - `logger.py`: Agrega `log_validacion()` para eventos estructurados
@@ -92,10 +85,41 @@
 - `exporter.py`: Limpieza de exportación con `slugify()`, integración de hash + título
   
 
----
-
 ### 📈 Derivadas observadas
 
 - **∆r = +6.0** → Nuevas funciones en tres genes (`validator`, `enhancer`, `utils`)
   
 - **∆c = +8.0** → Trazabilidad total, fallback tolerante, interfaz modular y testable
+
+---
+
+## 📝 Changelog V3.R2.C3
+
+### ✨ Nuevas funciones:
+
+📦 Gen `exporter.py`
+
+- `exportar_archivos()`: Exporta `.txt`, `.md`, `.jsonl` en rutas trazables y AI-ready
+  
+- `_guardar_txt()`, `_guardar_md()`, `_guardar_jsonl()`: Helpers limpios por tipo
+  
+- `slugify()`: Estandariza nombres de carpetas/archivos
+  
+
+🧠 Gen `logger.py`
+
+- Mensaje visual y estructurado de exportación por documento
+
+### 🧪 Cobertura de tests:
+
+- ✅ Exportación verificada para cada tipo de archivo (`.txt`, `.md`, `.jsonl`)
+  
+- ✅ Testea que el contenido no esté vacío y que la estructura sea correcta
+  
+- ✅ Limpieza de directorios tras exportación para entornos CI
+  
+### 📈 Derivadas observadas
+
+- **∆r = +3.0** → Nuevas funciones activadas por exportación estructurada
+  
+- **∆c = +3.0** → Modularidad, trazabilidad, test unitario por tipo de salida
