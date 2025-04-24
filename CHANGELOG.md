@@ -123,3 +123,53 @@
 - **∆r = +3.0** → Nuevas funciones activadas por exportación estructurada
   
 - **∆c = +3.0** → Modularidad, trazabilidad, test unitario por tipo de salida
+
+---
+
+## 📝 Changelog V3.R2.C4
+
+### ✨ Nuevas funciones:
+
+🧩 Gen `enhancer_utils.py`
+
+- `acumular_stats()`: Fusiona métricas por tipo de corrección sin perder trazabilidad
+  
+- `aplicar_diccionario()`: Aplica diccionario OCR externo (`ocr_dict.json`) para correcciones ligadas al dominio visual
+  
+
+🧪 Gen `test_utils.py`
+
+- `test_aplicar_diccionario()`: Valida reemplazo correcto a partir de un dict OCR
+  
+- `test_acumular_stats()`: Asegura combinación robusta de contadores en pipeline adaptativo
+  
+
+### 🧬 Nuevos usos/estructuras:
+
+- Uso dinámico de `ocr_dict.json` en `pipeline_hooked_enhancer()` con fallback seguro
+  
+- Estadísticas detalladas por tipo de mutación textual registradas en `stats_global`
+  
+
+### 🧪 Cobertura de tests:
+
+- ✅ Tests directos para ambos helpers en `test_utils.py`
+  
+- ✅ Integración comprobada dentro de `test_enhancer.py` vía stats acumuladas
+  
+
+### 🔄 Mutaciones en módulos relacionados:
+
+- `enhancer.py`: Delegación de limpieza OCR y acumulación de impacto a `enhancer_utils`
+  
+- `main.py`: No requiere cambios – integración transparente
+  
+
+### 📈 Derivadas observadas:
+
+- **∆r = +2.0** → Se introducen dos helpers clave para mejora semántica
+  
+- **∆c = +2.0** → Funciones reusables, documentadas y testeadas
+
+---
+
