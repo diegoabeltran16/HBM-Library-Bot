@@ -1,0 +1,8 @@
+{
+  "title": "-tests_test_ocr.py",
+  "text": "## [[Tags]]\n-tests_test_ocr.py [[--🧪 tests/]] -src_ocr.py [[🌀2️⃣ OCR Inteligente con Tesseract]]\n\n```python\nimport sys\nfrom pathlib import Path\n\n# 🔁 Para que se pueda importar src/\nsys.path.append(str(Path(__file__).resolve().parents[1]))\n\nfrom src.ocr import ocr_completo_inteligente\n\n\ndef test_ocr_pdf_con_imagen():\n    texto = ocr_completo_inteligente(\"tests/fixtures/ocr_simple.pdf\")\n    assert isinstance(texto, str)\n    assert len(texto.strip()) > 10\n    assert \"Multidimensional Change of Variable\" in texto\n\n\n```",
+  "tags": "-tests_test_ocr.py [[--🧪 tests/]] -src_ocr.py [[🌀2️⃣ OCR Inteligente con Tesseract]]",
+  "type": "text/markdown",
+  "created": "20250424205039145",
+  "modified": "20250424205039145"
+}

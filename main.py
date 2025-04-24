@@ -1,103 +1,102 @@
-"""
-Script principal del OpenPages-pipeline 🧠📘
-Procesa todos los archivos PDF dentro de /input/** y genera salidas en /output
-"""
-
 import os
 import argparse
 from pathlib import Path
 
-from src.parser import extract_text  # ✅ Ahora incluye heurística + OCR
+from src.parser import extract_text
 from src.cleaner import limpiar_texto_completo
 from src.enhancer import enriquecer_texto
 from src.classifier import clasificar_documento
 from src.exporter import exportar_archivos
 from src.logger import log_evento
 from src.validator import validar_documento
+from src.utils import calcular_hash_md5  # Para trazabilidad única del documento
 
-# Forzar idioma visual en consola
+# Forzar idioma visual en consola a español
 os.environ["LANG"] = "es"
 
 INPUT_DIR = "input"
 
-def main(debug=False):
+def main(debug: bool = False):
     print("🚀 Iniciando Dewey Pipeline...")
 
     archivos_pdf = list(Path(INPUT_DIR).rglob("*.pdf"))
     if not archivos_pdf:
-        print("⚠️  No se encontraron archivos PDF en la carpeta 'input/'")
+        print("⚠️ No se encontraron archivos PDF en la carpeta 'input/'")
         return
 
-    print(f"🔍 Se encontraron {len(archivos_pdf)} archivos para procesar.")
+    total = len(archivos_pdf)
+    errores = 0
+    procesados = 0
 
-    resumen = {
-        "procesados": 0,
-        "omitidos": 0,
-        "errores": 0
-    }
+    if debug:
+        print(f"🔍 Se encontraron {total} archivos para procesar.")
 
     for archivo in archivos_pdf:
         ruta = str(archivo)
-        nombre_archivo = archivo.stem
-        tipo = Path(archivo).parent.name  # Carpeta como tipo (Book, Essay, etc.)
-
         try:
-            print(f"\n📘 Procesando: {ruta}")
-            # 1 Extraer texto (usa OCR si es necesario automáticamente)
+            # Extracción y logging inicial
+            if debug:
+                print(f"\n📘 Procesando: {ruta}")
             texto_crudo = extract_text(ruta)
             log_evento("procesar", archivo=ruta)
 
-            if any(tag in texto_crudo for tag in ["[OCR]", "[OCR Lite]"]):
-                print("👁️ Se usó OCR para extraer el contenido (modo inteligente)")
-
-            # 2️ Limpiar texto
+            # Limpieza y enriquecimiento
             texto_limpio = limpiar_texto_completo(texto_crudo, modo_md=True)
-
-            # 3 Enriquecer texto (reparar cid, normalizar unicode, marcar dudosos)
             texto_enriquecido = enriquecer_texto(texto_limpio, archivo=ruta, debug=debug)
 
-            # 4 Clasificar
+            # Clasificación
             resultado = clasificar_documento(texto_enriquecido)
             categoria = resultado.get("categoria")
             dewey = resultado.get("dewey")
             titulo = resultado.get("titulo")
             autor = resultado.get("autor")
-
             print(f"📖 Clasificado como: {categoria} ({dewey})")
             print(f"📝 Título: {titulo or '[Sin título]'} | Autor: {autor or '[Sin autor]'}")
 
-            # 5 Validar documento completo
-            es_valido, info = validar_documento(texto_enriquecido, titulo, autor)
-            if not es_valido:
-                log_evento("warning_meta", archivo=ruta, nivel="WARNING", razones=info.get("razones", []))
-                print(f"⚠️  Documento omitido: {info.get('razones', [])}")
-                resumen["omitidos"] += 1
-                continue
+            # Hash para trazabilidad
+            hash_doc = calcular_hash_md5(ruta)
 
-            # 6 Exportar
-            exportar_archivos(tipo, titulo, texto_enriquecido, categoria, dewey, autor)
+            # Validación semántica (solo logging, no omitir)
+            es_valido, info = validar_documento(texto_enriquecido, ruta, hash_doc)
+            if debug and info.get('razones'):
+                for razon in info['razones']:
+                    print(f"⚠️ {razon}")
 
-            # 7 Logging visual + estructurado
-            log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey, nombre=nombre_archivo)
+            # Exportar siempre
+            exportar_archivos(
+                tipo=Path(archivo).parent.name,
+                titulo=titulo,
+                texto=texto_enriquecido,
+                categoria=categoria,
+                dewey=dewey,
+                autor=autor,
+                hash_doc=hash_doc
+            )
+
+            # Logging final
+            log_evento("clasificado", archivo=ruta, categoria=categoria, dewey=dewey)
             log_evento("export_ok", archivo=ruta, categoria=categoria, dewey=dewey)
-            resumen["procesados"] += 1
+            procesados += 1
 
         except Exception as e:
+            errores += 1
             log_evento("error_parse", archivo=ruta, nivel="ERROR", mensaje=str(e))
-            print(f"❌ Error procesando {ruta}: {e}")
-            resumen["errores"] += 1
+            if debug:
+                print(f"❌ Error procesando {ruta}: {e}")
 
+    # Resumen final en estilo multilinea
     print(f"""
 📊 Resumen del Pipeline:
-          ✔️ Procesados: {resumen['procesados']}
-          ⚠️ Omitidos: {resumen['omitidos']}
-          ❌ Errores: {resumen['errores']}
+  ✔️ Procesados: {procesados}
+  ❌ Errores: {errores}
 """)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Dewey Pipeline – Procesador de PDFs enriquecidos")
-    parser.add_argument("--debug", action="store_true", help="Muestra pre/post enriquecimiento")
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Muestra detalles de cada paso del pipeline"
+    )
     args = parser.parse_args()
 
     main(debug=args.debug)

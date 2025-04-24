@@ -1,12 +1,15 @@
 # tests/test_cleaner.py
 import sys
 from pathlib import Path
-from src.cleaner import (
+sys.path.append(str(Path(__file__).resolve().parents[1]))  # ✅ Esto primero
+
+from src.cleaner import (  # ✅ Ahora Python sabe dónde está 'src'
     limpiar_texto,
     normalizar_unicode,
     eliminar_lineas_ruido,
     limpiar_texto_completo,
 )
+
 
 # 🔧 Asegura que src/ sea visible desde cualquier entorno
 sys.path.append(str(Path(__file__).resolve().parents[1]))

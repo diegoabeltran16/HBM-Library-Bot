@@ -3,10 +3,19 @@ from datetime import datetime
 from src.logger import log_validacion
 from src.utils import calcular_hash_md5
 
-def validar_documento(texto: str, ruta_pdf: str) -> list:
+def validar_documento(
+    texto: str,
+    ruta_pdf: str,
+    hash_doc: str = None,
+    tolerante: bool = False
+) -> tuple[bool, dict]:
     """
     Ejecuta validaciones sintácticas y semánticas sobre el texto extraído,
-    loggea cada evento y devuelve un resumen de errores.
+    loggea cada evento pero nunca bloquea la exportación.
+
+    Retorna:
+      - True siempre (validación sólo emite warnings)
+      - info: dict con la clave 'razones' listando los errores detectados
     """
     errores = []
 
@@ -22,8 +31,11 @@ def validar_documento(texto: str, ruta_pdf: str) -> list:
     errores += validar_secciones(texto)
     errores += validar_citas_referencias(texto)
 
-    # Logging de errores con trazabilidad
-    hash_doc = calcular_hash_md5(ruta_pdf)
+    # Determinar identificador de documento para logging
+    if not hash_doc:
+        hash_doc = calcular_hash_md5(ruta_pdf)
+
+    # Registrar cada error como evento de validación
     for error in errores:
         log_validacion(
             evento="validation_error",
@@ -35,9 +47,11 @@ def validar_documento(texto: str, ruta_pdf: str) -> list:
             hash=hash_doc
         )
 
-    return errores
+    # Nunca bloqueamos la exportación
+    return True, {"razones": errores}
 
-def validar_resumen(texto):
+
+def validar_resumen(texto: str) -> list[str]:
     errores = []
     match = re.search(r'(?i)^(Resumen|Abstract):\s*(.+?)(\n\n|\n[A-Z])', texto, re.DOTALL | re.MULTILINE)
     if not match:
@@ -45,46 +59,56 @@ def validar_resumen(texto):
     else:
         resumen = match.group(2)
         palabras = len(resumen.split())
-        if not (100 <= palabras <= 250):
+        if palabras < 100 or palabras > 250:
             errores.append(f"Resumen fuera de rango: {palabras} palabras.")
     return errores
 
-def validar_secciones(texto):
+
+def validar_secciones(texto: str) -> list[str]:
     esperadas = ['Introducción', 'Método', 'Resultados', 'Discusión', 'Referencias']
     encontradas = re.findall(r'^\s*(%s)' % '|'.join(esperadas), texto, re.MULTILINE | re.IGNORECASE)
-    faltantes = set(esperadas) - set(map(str.capitalize, encontradas))
-    return [f"Secciones faltantes: {', '.join(faltantes)}"] if faltantes else []
+    encontradas_cap = set(map(str.capitalize, encontradas))
+    faltantes = [sec for sec in esperadas if sec not in encontradas_cap]
+    if faltantes:
+        return [f"Secciones faltantes: {', '.join(faltantes)}"]
+    return []
 
-def validar_citas_referencias(texto):
+
+def validar_citas_referencias(texto: str) -> list[str]:
     if not re.search(r'\[\d+\]|\([A-Z][a-z]+, \d{4}\)', texto):
         return ["No se detectaron citas ni referencias."]
     return []
 
-def mapear_codigo(error_msg):
-    if "Resumen" in error_msg:
-        return "E4002"
-    if "Secciones faltantes" in error_msg:
-        return "E4001"
-    if "citas" in error_msg:
-        return "E4003"
-    if "vacío" in error_msg:
+
+def mapear_codigo(error_msg: str) -> str:
+    msg = error_msg.lower()
+    if "vacío" in msg or "ilegible" in msg:
         return "E4000"
+    if "secciones faltantes" in error_msg:
+        return "E4001"
+    if "resumen" in error_msg.lower():
+        return "E4002"
+    if "citas" in msg:
+        return "E4003"
     return "E4999"
 
-def clasificar_severidad(error_msg):
-    if "vacío" in error_msg:
-        return "CRITICAL"
-    if "Resumen" in error_msg:
+
+def clasificar_severidad(error_msg: str) -> str:
+    msg = error_msg.lower()
+    if "vacío" in msg or "ilegible" in msg:
         return "WARNING"
-    if "Secciones" in error_msg:
-        return "ERROR"
+    if "resumen" in msg:
+        return "INFO"
+    if "secciones faltantes" in error_msg:
+        return "INFO"
     return "INFO"
 
-def detectar_zona(error_msg):
-    if "Resumen" in error_msg:
+
+def detectar_zona(error_msg: str) -> str:
+    if "resumen" in error_msg.lower():
         return "abstract"
-    if "Secciones" in error_msg:
+    if "secciones faltantes" in error_msg:
         return "body"
-    if "citas" in error_msg:
+    if "citas" in error_msg.lower():
         return "references"
     return "global"

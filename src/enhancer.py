@@ -7,9 +7,16 @@ from typing import Callable, Tuple, Dict, List
 from src.enhancer_utils import acumular_stats, aplicar_diccionario
 
 __all__ = [
-    'reemplazar_cid_ascii', 'reparar_encoding', 'normalizar_unicode',
-    'reparar_palabras_partidas', 'reparar_cid', 'reparar_ocr_simbolos',
-    'marcar_fragmentos_dudosos', 'pipeline_hooked_enhancer', 'enriquecer_texto', 'acumular_stats'
+    'reemplazar_cid_ascii',
+    'reparar_encoding',
+    'normalizar_unicode',
+    'reparar_palabras_partidas',
+    'reparar_cid',
+    'reparar_ocr_simbolos',
+    'marcar_fragmentos_dudosos',
+    'pipeline_hooked_enhancer',
+    'enriquecer_texto',
+    'acumular_stats'
 ]
 
 # === Funciones de reparación semántica ===
@@ -21,7 +28,6 @@ def reemplazar_cid_ascii(texto: str) -> Tuple[str, Dict[str, int]]:
     matches = re.findall(r'cid:\d+', texto)
     nuevo_texto = re.sub(r'cid:\d+', '', texto)
     return nuevo_texto, {'reemplazos_cid_ascii': len(matches)}
-
 
 def reparar_encoding(texto: str) -> Tuple[str, Dict[str, int]]:
     """
@@ -40,13 +46,11 @@ def reparar_encoding(texto: str) -> Tuple[str, Dict[str, int]]:
             count += ocurrencias
     return nuevo, {'reparaciones_encoding': count}
 
-
 def normalizar_unicode(texto: str) -> Tuple[str, Dict[str, int]]:
     """
     Normaliza la forma Unicode a NFC para asegurar combinación de caracteres.
     """
     return unicodedata.normalize('NFC', texto), {}
-
 
 def reparar_palabras_partidas(texto: str) -> Tuple[str, Dict[str, int]]:
     """
@@ -57,7 +61,6 @@ def reparar_palabras_partidas(texto: str) -> Tuple[str, Dict[str, int]]:
     nuevo = re.sub(pattern, '', texto)
     return nuevo, {'palabras_reparadas': ocurrencias}
 
-
 def reparar_cid(texto: str) -> Tuple[str, Dict[str, int]]:
     """
     Elimina patrones 'cid(123)' y cuenta las sustituciones.
@@ -66,11 +69,10 @@ def reparar_cid(texto: str) -> Tuple[str, Dict[str, int]]:
     nuevo = re.sub(r'cid\(\d+\)', '', texto)
     return nuevo, {'reemplazos_cid': len(matches)}
 
-
 def reparar_ocr_simbolos(texto: str) -> Tuple[str, Dict[str, int]]:
     """
-    Sustituye ligaduras y símbolos OCR por caracteres ASCII estándar.
-    Ejemplo: 'ﬁ' → 'fi', 'ﬂ' → 'fl', 'Ɵ' → 'O'.
+    Sustituye ligaduras y símbolos OCR por caracteres ASCII estándar:
+    'ﬁ' → 'fi', 'ﬂ' → 'fl', 'Ɵ' → 'O'.
     """
     mapping = {'ﬁ': 'fi', 'ﬂ': 'fl', 'Ɵ': 'O'}
     count = 0
@@ -82,15 +84,14 @@ def reparar_ocr_simbolos(texto: str) -> Tuple[str, Dict[str, int]]:
             count += ocurrencias
     return nuevo, {'reparados_ocr_simbolos': count}
 
-
 def marcar_fragmentos_dudosos(texto: str) -> Tuple[str, Dict[str, int]]:
     """
     Marca fragmentos dudosos sin alterar el contenido,
-    añadiendo etiquetas para análisis posterior.
+    añadiendo etiquetas para análisis posterior (no-op por ahora).
     """
-    # Implementación mínima: no-op, sin estadísticas
     return texto, {}
 
+# === Pipeline adaptativo ===
 
 def pipeline_hooked_enhancer(
     texto: str,
@@ -107,8 +108,8 @@ def pipeline_hooked_enhancer(
     Args:
         texto: texto original a mejorar.
         config: diccionario con:
-            pasos: lista de funciones (func) que devuelven (texto, stats).
-            retry_umbral: umbral mínimo de impacto para reintentar función.
+            pasos: lista de funciones que devuelven (texto, stats).
+            retry_umbral: umbral mínimo de impacto para reintentar.
             max_intentos: máximo de repeticiones por función.
             ocr_dict_path: ruta opcional al archivo ocr_dict.json.
 
@@ -148,15 +149,29 @@ def pipeline_hooked_enhancer(
 
     return texto_actual, stats_global
 
+# === Interfaz simple para main.py ===
 
 def enriquecer_texto(
     texto: str,
-    config: Dict[str, any] = None
-) -> str:
+    archivo: str = None,
+    debug: bool = False,
+    config: Dict[str, any] = None,
+    return_stats: bool = False  # ← ⚠️ NUEVO parámetro opcional
+) -> str | Tuple[str, Dict[str, float]]:
     """
-    Función de envoltura que expone un flujo de enriquecimiento sencillo.
+    Función de envoltura que expone un flujo de enriquecimiento sencillo,
+    aceptando parámetros de debugging y configuración opcional.
 
-    Si no se proporciona configuración, usa los pasos por defecto.
+    Args:
+        texto: Texto a enriquecer.
+        archivo: Ruta del PDF para debug o logging.
+        debug: Si True, muestra comparación antes/después.
+        config: Diccionario con configuración de pasos.
+        return_stats: Si True, retorna también las estadísticas.
+
+    Returns:
+        Solo texto enriquecido (por defecto),
+        o (texto, estadísticas) si return_stats=True.
     """
     default_steps = [
         reemplazar_cid_ascii,
@@ -169,5 +184,13 @@ def enriquecer_texto(
     ]
     cfg = config or {}
     cfg.setdefault('pasos', default_steps)
-    enriched, _ = pipeline_hooked_enhancer(texto, cfg)
-    return enriched
+
+    if debug and archivo:
+        print(f"🔍 [DEBUG] Pre-enriquecimiento ({archivo}): {texto[:200]}...")
+
+    enriched, stats = pipeline_hooked_enhancer(texto, cfg)
+
+    if debug and archivo:
+        print(f"🔍 [DEBUG] Post-enriquecimiento ({archivo}): {enriched[:200]}...")
+
+    return (enriched, stats) if return_stats else enriched

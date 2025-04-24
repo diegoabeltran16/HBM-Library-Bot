@@ -31,7 +31,6 @@ def test_validar_citas_referencias_ausentes():
     errores = validar_citas_referencias(texto)
     assert any("citas" in e.lower() for e in errores)
 
-
 # ─────────────────────────────────────────────────────────────
 # Test integrador: documento con múltiples errores
 # ─────────────────────────────────────────────────────────────
@@ -41,12 +40,13 @@ def test_validar_documento_con_errores(tmp_path):
     ruta_pdf = tmp_path / "doc_fallido.pdf"
     ruta_pdf.write_text("contenido simulado")
 
-    errores = validar_documento(texto, str(ruta_pdf))
-    assert isinstance(errores, list)
-    assert len(errores) >= 3
-    assert any("Resumen" in e for e in errores)
-    assert any("Secciones" in e for e in errores)
-    assert any("citas" in e.lower() for e in errores)
+    es_valido, info = validar_documento(texto, str(ruta_pdf))
+    assert es_valido is True
+    assert isinstance(info.get("razones"), list)
+    assert len(info["razones"]) >= 3
+    assert any("Resumen" in e for e in info["razones"])
+    assert any("Secciones" in e for e in info["razones"])
+    assert any("citas" in e.lower() for e in info["razones"])
 
 def test_documento_real_the_origins():
     import fitz  # PyMuPDF
@@ -54,8 +54,8 @@ def test_documento_real_the_origins():
     doc = fitz.open(ruta)
     texto = "\n".join([page.get_text() for page in doc if page.get_text()])
 
-    errores = validar_documento(texto, ruta)
-    print("Errores detectados:", errores)
-    assert isinstance(errores, list)
-    assert len(errores) <= 2  # toleramos 0-2 errores leves (ej: resumen muy largo o cita no reconocida)
-
+    es_valido, info = validar_documento(texto, ruta)
+    print("Errores detectados:", info)
+    assert es_valido is True
+    assert isinstance(info.get("razones"), list)
+    assert len(info["razones"]) <= 2  # toleramos 0-2 errores leves

@@ -18,7 +18,7 @@ Incluye dos tipos de eventos:
 import os
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from loguru import logger
 
@@ -87,7 +87,7 @@ def log_evento(evento: str, archivo: str = "", categoria: str = "", dewey: str =
     mensaje = idioma.format(archivo=archivo, categoria=categoria, dewey=dewey)
 
     log_data = {
-        "timestamp": datetime.now().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "ejecucion": EXECUTION_ID,
         "evento": evento,
         "archivo": archivo,
@@ -131,21 +131,17 @@ def log_validacion(evento: str, error_code: str, severity: str, zone: str, archi
     Registra un evento de validación semántica en formato AI-ready:
     - Incluye código, severidad, zona, hash, y razones
     - Se escribe tanto en el log global como en un log exclusivo por documento (basado en hash)
-
-    Args:
-        evento: tipo de evento (debe ser 'validation_error')
-        error_code: código semántico (ej: E4002)
-        severity: INFO / WARNING / ERROR / CRITICAL
-        zone: sección del documento afectada
-        archivo: ruta al PDF original
-        razones: lista con descripciones del problema
-        hash: hash_md5 del documento (opcional pero recomendado)
     """
-    assert evento == "validation_error", "Evento inválido para log_validacion"
-    assert isinstance(razones, list) and razones, "Razones debe ser una lista no vacía"
+    if evento != "validation_error":
+        print(f"❌ Evento inválido: {evento}")
+        return
+
+    if not isinstance(razones, list) or not razones:
+        print(f"❌ Razones vacías o mal formateadas para {evento}")
+        return
 
     log_data = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "ejecucion": EXECUTION_ID,
         "evento": evento,
         "error_code": error_code,
@@ -156,14 +152,12 @@ def log_validacion(evento: str, error_code: str, severity: str, zone: str, archi
         "hash_doc": hash
     }
 
-    # Registro principal en .jsonl global
     try:
         with open(global_log_jsonl, "a", encoding="utf-8") as f:
             f.write(json.dumps(log_data) + "\n")
     except Exception as e:
         print(f"❌ Error escribiendo validación global: {e}")
 
-    # Registro alternativo por documento (hash)
     if hash:
         try:
             archivo_hash = LOGS_DIR / f"{hash}.jsonl"
@@ -172,5 +166,4 @@ def log_validacion(evento: str, error_code: str, severity: str, zone: str, archi
         except Exception as e:
             print(f"❌ Error escribiendo log por hash: {e}")
 
-    # Mensaje en consola
-    print(f"[{severity.upper()}] {zone} → {razones[0]}")
+    print(f"🧠 [{severity.upper()}] [{zone}] {razones[0]}")

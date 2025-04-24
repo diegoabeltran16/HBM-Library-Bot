@@ -1,36 +1,46 @@
-# tests/test_exporter.py
 import sys
+import hashlib
+import shutil
 from pathlib import Path
-from pathlib import Path
-from src.exporter import exportar_archivos, limpiar_nombre
 
-# 🔧 Asegura que src/ sea visible desde cualquier entorno
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-def test_exportar_archivos_crea_todos_los_formatos():
+from src.exporter import exportar_archivos, slugify
+
+def test_exportar_archivos_crea_todos_los_formatos(tmp_path):
+    # 📄 Crear PDF falso para simular entrada
+    pdf_path = tmp_path / "fake_doc.pdf"
+    pdf_path.write_text("Simulado")
+
+    texto = "Este es un párrafo.\n\nEste es otro."
+    titulo = "Documento de Prueba"
+    autor = "Ana María"
     tipo = "Essay"
-    nombre = "Prueba de Exportación"
-    texto = "Párrafo 1.\n\nPárrafo 2."
-    categoria = "Philosophy and Psychology"
+    categoria = "Filosofía"
     dewey = "100"
-    autores = "Jane Doe"
 
-    # Construir nombre_base con la misma lógica del exporter
-    nombre_base = "_".join([
-        limpiar_nombre(tipo),
-        dewey,
-        limpiar_nombre(categoria),
-        limpiar_nombre(nombre),
-        limpiar_nombre(autores)
-    ])
+    # 🧬 Calcular hash simulado
+    hash_doc = hashlib.md5("Simulado".encode("utf-8")).hexdigest()
 
-    output_dir = Path("output")
-    extensiones = [".txt", ".md", ".jsonl"]
+    # 📦 Ejecutar exportación
+    exportar_archivos(tipo, titulo, texto, categoria, dewey, autor, hash_doc)
 
-    exportar_archivos(tipo, nombre, texto, categoria, dewey, autores)
+    tipo_slug = slugify(tipo)
+    titulo_slug = slugify(titulo)
+    base_path = Path("output") / tipo_slug / f"{titulo_slug}_{hash_doc}"
 
-    for ext in extensiones:
-        path = output_dir / f"{nombre_base}{ext}"
-        assert path.exists(), f"Falta el archivo: {path}"
-        assert path.stat().st_size > 0, f"Archivo vacío: {path}"
-        path.unlink()  # Limpieza
+    assert base_path.exists(), "No se creó la carpeta por documento"
+
+    for ext in [".txt", ".md", ".jsonl"]:
+        archivo = base_path / f"{hash_doc}{ext}"
+        assert archivo.exists(), f"Falta el archivo: {archivo}"
+        assert archivo.stat().st_size > 0, f"Archivo vacío: {archivo}"
+
+    # 🔐 Cierre explícito y limpieza solo si no está en uso
+    try:
+        for archivo in base_path.glob("*"):
+            archivo.unlink()
+        base_path.rmdir()
+        base_path.parent.rmdir()
+    except PermissionError as e:
+        print(f"⚠️ No se pudo limpiar completamente por permisos: {e}")
