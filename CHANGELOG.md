@@ -205,3 +205,43 @@
 - **∆r = +2.0** → Expansión del flujo principal con validación integrada
   
 - **∆c = +3.0** → Madurez funcional y trazabilidad alcanzada
+
+---
+
+## Cierre V.3
+
+### 🎯 Mutaciones integradas:
+
+- Validación semántica (`validator.py`) con trazabilidad por `zone`, `error_code`, `severity`, `razones`
+  
+- Corrección inteligente OCR con `ocr_dict.json`
+  
+- Exportación estructurada y AI-ready con carpetas por documento
+  
+- Orquestación tolerante vía CLI `--semantic-check`, `--tolerante`
+  
+- Hashing único por documento para evitar reprocesamientos
+  
+
+### 🧬 Genes mutados:
+
+- `validator.py`, `enhancer.py`, `exporter.py`, `main.py`, `utils.py`, `enhancer_utils.py`, `logger.py`
+
+### 🧪 Test y cobertura:
+
+- ✅ 100% en `test_validator.py`, `test_enhancer.py`, `test_utils.py`, `test_exporter.py`
+
+### 📦 Nuevos outputs:
+
+- `.txt`, `.md`, `.jsonl` por hash
+  
+- `.jsonl` de errores semánticos
+  
+- `ocr_dict.json` para control OCR
+  
+
+### 📈 Derivadas observadas:
+
+- **∆r = +5.0**
+  
+- **∆c = +6.0**
