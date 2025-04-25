@@ -1,8 +1,0 @@
-{
-  "title": "-requirements.txt",
-  "text": "## [[Tags]]\n[[--- Codigo]] [[--📘 Documentacion]] -requirements.txt\n\n```txt\n# 🧬 Requisitos del Proyecto OpenPages Pipeline – Revisión V2 completa\n\n# 👝︝ OCR (Vuelta 2)\npytesseract>=0.3.10\npdf2image>=1.16.3\nPillow>=10.0.0\n\n# 🔬 Parser (V1)\npdfplumber>=0.10.3     # Extracción estructurada de PDFs nativos\nPyMuPDF>=1.22.3        # Alternativa moderna a pdfplumber\n\n# 🔧 Reparación Semántica (V1)\nftfy>=6.1.1            # Fixes mojibake and Unicode problems\nunidecode>=1.3.6       # Translitera caracteres Unicode → ASCII base\n\n# 📝 Logging inteligente (V1)\nloguru>=0.7.2          # Logger semántico y estructurado\n\n# 🧪 Testing (V5+, opcional en V2)\npytest>=8.1.1\nreportlab>=4.0.8       # Generación de PDFs sintéticos\n\n# ❳ UX opcional\ntqdm>=4.66.1           # Progreso visual OCR\n\n\n```",
-  "tags": "[[--- Codigo]] [[--📘 Documentacion]] -requirements.txt",
-  "type": "text/markdown",
-  "created": "20250424205039066",
-  "modified": "20250424205039066"
-}

@@ -2,7 +2,7 @@ import os
 import argparse
 from pathlib import Path
 
-from src.parser import extract_text
+from src.parser import extract_text  # ✅ Ahora incluye heurística + OCR
 from src.cleaner import limpiar_texto_completo
 from src.enhancer import enriquecer_texto
 from src.classifier import clasificar_documento
