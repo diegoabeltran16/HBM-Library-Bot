@@ -1,6 +1,8 @@
 # 📘 OpenPages-pipeline – Procesamiento Inteligente de PDFs como Biblioteca Abierta 🤖📚
 
 ![](https://github.com/diegoabeltran16/OpenPages-pipeline/actions/workflows/test.yml/badge.svg)
+[![Dependabot Enabled](https://img.shields.io/badge/dependabot-enabled-brightgreen.svg)](https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically)
+
 
 ---
 
