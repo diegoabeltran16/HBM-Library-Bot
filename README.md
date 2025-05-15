@@ -25,7 +25,7 @@ Facilitar el análisis y organización de literatura científica con una herrami
 
 ---
 
-## 📚 Melvil Dewey y el Acceso Abierto al Conocimiento
+## 📚 Acceso Abierto al Conocimiento
 
 > ✨ *"Mi trabajo de vida es hacer más fácil el camino hacia el conocimiento."*  
 > — **Melvil Dewey** *
