@@ -8,11 +8,3 @@ updates:
       - "🧬 dependency"
     assignees:
       - gizmo
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "daily"
-    allow:
-      - dependency-type: "direct"
-    labels:
-      - "🛡️ security"
