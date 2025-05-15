@@ -1,14 +1,17 @@
 # 🛡️ Política de Seguridad – OpenPages-pipeline
 
-## 🔢 Versiones con soporte
+Este proyecto usa Dependabot y escaneo de vulnerabilidades para asegurar una cadena de suministro robusta.  
+Si encuentras un fallo de seguridad, por favor repórtalo responsablemente a través de Issues con la etiqueta `security`.
 
-En esta fase del proyecto (MVP), el soporte de seguridad se centra únicamente en la versión principal en desarrollo. Las versiones anteriores o experimentales no recibirán parches de seguridad.
+## Procedimiento de Parches
+- Se aplican automáticamente mediante `dependabot.yml`.
+- Se revisan semanalmente en las reuniones de vuelta helicoidal.
 
-| Versión   | Soporte actual     |
-|-----------|--------------------|
-| main    | ✅ Activa y mantenida |
-| 0.1.x   | ❌ No mantenida     |
-| < 0.1   | ❌ Obsoleta         |
+## Herramientas activas
+- GitHub Dependency Graph
+- GitHub Advisory Database
+- Dependabot Alerts & PRs
+
 
 ---
 
